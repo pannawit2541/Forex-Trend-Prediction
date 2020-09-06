@@ -21,6 +21,11 @@ def create_candlestick(df) :
     
     mm = momentum(df,[10])[10]
 
+    ss = stochastic(df,[14,15])[14]
+
+    ww = williams(df,[15])[15]
+
+    p = proc(df,[30])[30]
     trace_0 = go.Ohlc(x=df.index,
                     open=df['Open'],
                     high=df['High'],
@@ -32,12 +37,15 @@ def create_candlestick(df) :
 
     #trace_2 = go.Scatter(x=df.index,y=detrend)
     #trace_2 = go.Scatter(x=line.index,y=line.Close)
-    trace_2 = go.Scatter(x=mm.index,y=mm.Close)
-    
+    #trace_2 = go.Scatter(x=mm.index,y=mm.Close)
+    #trace_2 = go.Scatter(x=ss.index,y=ss.K)
+    #trace_2 = go.Scatter(x=ww.index,y=ww.R)
+    trace_2 = go.Scatter(x=p.index,y=p.Close)
+
     #data = [trace_0,trace_1,trace_2]
-    fig = tools.make_subplots(rows=2,cols=1,shared_xaxes=True,shared_yaxes=True)
+    fig = tools.make_subplots(rows=2,cols=1,shared_xaxes=True)
     fig.append_trace(trace_0,1,1)
-    #fig.append_trace(trace_1,1,1)
+    fig.append_trace(trace_1,1,1)
     fig.append_trace(trace_2,2,1)
 
     py.offline.plot(fig,filename='Candlestick_chart')
@@ -164,7 +172,7 @@ def fourier(prices,periods,method='difference'):
     #################################################
 
     plot = False
-    dict = {}
+    Result = {}
 
     detrended = Detrend(prices,method)
 
@@ -206,8 +214,8 @@ def fourier(prices,periods,method='difference'):
         df.columns = [['a0','a1','b1','w']]
         df = df.fillna(method='bfill')
 
-        dict[periods[i]] = df
-    return dict
+        Result[periods[i]] = df
+    return Result
             
 def wadl(prices,periods):
 
@@ -219,7 +227,7 @@ def wadl(prices,periods):
 
     #################################################
 
-    dict = {}
+    Result = {}
     for i in range(0,len(periods)):
         
         WAD = []
@@ -244,9 +252,9 @@ def wadl(prices,periods):
         
         WAD = WAD.cumsum()
         WAD = pd.DataFrame(list(zip(WAD)),index=prices.iloc[periods[i]:-periods[i]].index,columns=['Close'])
-        dict[periods[i]] = WAD
+        Result[periods[i]] = WAD
 
-    return dict
+    return Result
 
 def OHLCresample(DataFrame,TimeFrame):
 
@@ -288,7 +296,7 @@ def momentum(prices,periods):
 
     Open = {}
     Close = {}
-    dict = {}
+    Result = {}
 
     for i in range(0,len(periods)):
         
@@ -299,12 +307,124 @@ def momentum(prices,periods):
                                         index = prices.iloc[periods[i]:].index,columns=['Close'])
 
         df = pd.concat([Open[periods[i]], Close[periods[i]]], axis=1)
-        dict[periods[i]] = df
+        Result[periods[i]] = df
     
-    return dict
+    return Result
         
+def stochastic(prices,periods):
+
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : periods for which to calculate the function value
+    #return  : oscillator function valuse
+
+    #################################################
+
+    Result = {}
+
+    for i in range(0,len(periods)):
+        Ks = []
+
+        for j in range(periods[i],len(prices)-periods[i]):
+
+            C = prices.Close.iloc[j+1]
+            H = prices.High.iloc[j-periods[i]:j].max()
+            L = prices.Low.iloc[j - periods[i]:j].min()
+
+            if H == L:
+                K = 0
+            else:
+                K = 100*(C-L)/(H-L)
+            Ks = np.append(Ks,K)
+        df = pd.DataFrame(Ks,index = prices.iloc[periods[i]+1:-periods[i]+1].index,columns=['K'])
+        df['D'] = df.K.rolling(3).mean()
+        df = df.dropna()
+
+        Result[periods[i]] = df
+
+    return Result
+
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate the function value
+    #return  : momentum indicator
+
+    #################################################
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate the function value
+    #return  : momentum indicator
+
+    #################################################
+
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate the function value
+    #return  : momentum indicator
+
+    #################################################
+
+     #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate the function value
+    #return  : momentum indicator
+
+    #################################################
 
 
+def williams(prices,periods):
+
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate the function value
+    #return  : values of williams osc function
+
+    #################################################
+
+    Result ={}
+
+    for i in range(0,len(periods)):
+        Rs = []
+        for j in range(periods[i],len(prices)-periods[i]):
+            C = prices.Close.iloc[j+1]
+            H = prices.High.iloc[j-periods[i]:j].max()
+            L = prices.Low.iloc[j - periods[i]:j].min()
+
+            if H == L:
+                R = 0
+            else:
+                R = -100*(H-C) / (H-L)
+            
+            Rs = np.append(Rs,R)
+        df = pd.DataFrame(Rs,index = prices.iloc[periods[i]+1:-periods[i]+1].index,columns = ['R'])
+        df = df.dropna()
+
+        Result[periods[i]] = df
+
+    return Result
+
+def proc(prices,periods):
+
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate PROC
+    #return  : PROC for indicated periods
+
+    #################################################
+
+    Result = {}
+    for i in range(0,len(periods)):
+        Result[periods[i]] = pd.DataFrame((prices.Close.iloc[periods[i]:]-prices.Close.iloc[:-periods[i]].values)/prices.Close.iloc[:-periods[i]].values,columns = ['Close'])
+
+    return Result
+    
 if __name__ == "__main__":
     df = pd.read_csv('dataset/EURUSD_H1.csv')
     df.set_index('Date', inplace=True, drop=True)
