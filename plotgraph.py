@@ -12,6 +12,7 @@ import scipy
 
 
 
+
 def create_candlestick(df) :
     ma = df.Close.rolling(center=False,window=30).mean()
 
@@ -25,7 +26,20 @@ def create_candlestick(df) :
 
     ww = williams(df,[15])[15]
 
+    AD = adosc(df,[30])[30]
+
     p = proc(df,[30])[30]
+
+    m = macd(df,[15,30])
+
+    c = cci(df,[30])[30]
+
+    b = bollinger(df,[20],2)[20]
+
+    avs = paverage(df,[20])[20]
+
+    s = slopes(df,[20])[20]
+
     trace_0 = go.Ohlc(x=df.index,
                     open=df['Open'],
                     high=df['High'],
@@ -40,8 +54,14 @@ def create_candlestick(df) :
     #trace_2 = go.Scatter(x=mm.index,y=mm.Close)
     #trace_2 = go.Scatter(x=ss.index,y=ss.K)
     #trace_2 = go.Scatter(x=ww.index,y=ww.R)
-    trace_2 = go.Scatter(x=p.index,y=p.Close)
-
+    #trace_2 = go.Scatter(x=p.index,y=p.Close)
+    #trace_2 = go.Scatter(x=AD.index,y=AD.AD)
+    #trace_2 = go.Scatter(x=m.index,y=m.L)
+    #trace_2 = go.Scatter(x=c.index,y=c.Close)
+    #trace_2 = go.Scatter(x=b.index,y=b.Upper)
+    #trace_2 = go.Scatter(x=avs.index,y=avs.Close)
+    trace_2 = go.Scatter(x=s.index,y=s.High)
+    
     #data = [trace_0,trace_1,trace_2]
     fig = tools.make_subplots(rows=2,cols=1,shared_xaxes=True)
     fig.append_trace(trace_0,1,1)
@@ -376,7 +396,6 @@ def stochastic(prices,periods):
 
     #################################################
 
-
 def williams(prices,periods):
 
     #################################################
@@ -425,6 +444,174 @@ def proc(prices,periods):
 
     return Result
     
+def adosc(prices,periods):
+   
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : (list) periods for which to calculate 
+    #return  : indicator values for indicated periods
+
+    #################################################
+
+    Result = {}
+
+    for i in range(0,len(periods)):
+
+        AD = []
+
+        for j in range(periods[i],len(prices)-periods[i]):
+
+            C = prices.Close.iloc[j+1]
+            H = prices.High.iloc[j-periods[i]:j].max()
+            L = prices.Low.iloc[j - periods[i]:j].min()
+            V = prices.Volume.iloc[j+1]
+
+            if H==L:
+                CLV = 0
+            else:
+                CLV = ((C-L)-(H-C))/(H-L)
+            AD = np.append(AD,CLV*V)
+        
+        AD = AD.cumsum()
+        AD = pd.DataFrame(AD,index = prices.iloc[periods[i]+1:-periods[i]+1].index,columns = ['AD'])
+
+        Result[periods[i]] = AD
+
+    return Result 
+
+def macd(prices,periods):
+    
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : 1x2 array containing values for the EMAS
+    #return  : MACD for given periods
+
+    #################################################
+
+    Result = {}
+
+    EMA1 = prices.Close.ewm(span=periods[0]).mean()
+    EMA2 = prices.Close.ewm(span=periods[1]).mean()
+
+    MACD = pd.DataFrame(EMA1- EMA2)
+    MACD.columns = ['L']
+
+    SigMACD = MACD.rolling(3).mean()
+    SigMACD.columns = ['SL']
+
+    Result = pd.concat([MACD, SigMACD], axis=1)
+
+    return Result
+
+def bollinger(prices,periods,deviations):
+
+    #################################################
+
+    #prices     : dataframe of OHLC prices
+    #periods    : periods for which to compute the bollinger bands
+    #deviations : deviations to use when calculating bands (upper & lower)
+    #return     : bollinger bands
+
+    #################################################
+
+    Result = {}
+
+    for i in range(0,len(periods)):
+
+        mid = prices.Close.rolling(periods[i]).mean()
+        Mid = pd.DataFrame(mid)
+        Mid.columns = ['Mid']
+
+        std = prices.Close.rolling(periods[i]).std()
+
+        upper = mid+deviations*std
+        Upper = pd.DataFrame(upper)
+        Upper.columns = ['Upper']
+
+        lower = mid-deviations*std
+        Lower = pd.DataFrame(lower)
+        Lower.columns = ['Lower']
+        
+        df = pd.concat((Upper,Mid,Lower),axis = 1)
+        
+        Result[periods[i]] = df
+
+    return Result
+
+def cci(prices,periods):
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : periods for which to compute the indicator
+    #return  : CCI for the given periods
+
+    #################################################
+
+    Result = {}
+
+    for i in range(0,len(periods)):
+        
+        MA = prices.Close.rolling(periods[i]).mean()
+        std = prices.Close.rolling(periods[i]).std()
+
+        D = (prices.Close - MA)/std
+
+        Result[periods[i]] = pd.DataFrame(((prices.Close - MA))/(0.015*D), index = prices.iloc[periods[i]:].index,columns=['Close'])
+
+    return Result
+
+def paverage(prices,periods):
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : periods for which to compute the indicator
+    #return  : averages over the given periods
+
+    #################################################
+
+    Result = {}
+    
+    for i in range(0,len(periods)):
+        Result[periods[i]] = pd.DataFrame(prices[['Open','High','Low','Close']].rolling(periods[i]).mean())
+    
+    return Result
+
+def slopes(prices,periods):
+    #################################################
+
+    #prices  : dataframe of OHLC prices
+    #periods : periods for which to compute the indicator
+    #return  : slopes over given periods
+
+    #################################################
+
+    Result = {}
+
+    for i in range(0,len(periods)):
+
+        ms = []
+
+        for j in range(periods[i],len(prices)-periods[i]):
+
+            y = prices.High.iloc[j - periods[i]:j].values
+            x = np.arange(0,len(y))
+
+            res = scipy.stats.linregress(x,y=y)
+            m = res.slope
+
+            ms = np.append(ms,m)   
+        
+        ms = pd.DataFrame(ms, index = prices.iloc[periods[i]:-periods[i]].index,columns = ['High'])
+
+        #ms.columns = [['High']]
+
+        Result[periods[i]] = ms
+    
+    return Result 
+
+
 if __name__ == "__main__":
     df = pd.read_csv('dataset/EURUSD_H1.csv')
     df.set_index('Date', inplace=True, drop=True)
