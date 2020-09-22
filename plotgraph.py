@@ -616,8 +616,10 @@ if __name__ == "__main__":
     df = pd.read_csv('dataset/EURUSD_H1.csv')
     df.set_index('Date', inplace=True, drop=True)
     #print(df)
-    create_candlestick(df.iloc[85000:])
-    
+    df = df.iloc[85000:]
+    #create_candlestick(df.iloc[85000:])
+    bb = bollinger(df,[20],2)
+    print(bb)
     #f = fourier(df.iloc[85000:],[10,15],method='difference')
 
 
