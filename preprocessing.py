@@ -215,8 +215,9 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
 
     df['Slope_4'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=4)
-    x = df.iloc[:2:]
-    y = df.iloc[:2,2]
-    print(y)
-    print(x)
-    #print(df)
+    df = df.fillna(method='bfill')
+
+
+
+
+    
