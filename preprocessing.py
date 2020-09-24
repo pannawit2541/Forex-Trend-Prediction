@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 
 import talib
-from finta import TA 
+#from finta import TA 
 from ta.volatility import BollingerBands
 from ta.trend import MACD
 
@@ -199,5 +199,24 @@ if __name__ == "__main__":
     df['HA_low'] = Low
     df['HA_close'] = Close
 
+    #------------------------------------------------------------#
+    # Relative Strange index (RSI) :
+    #------------------------------------------------------------#
+
+    periods = [12,24,48,60]
+    for i in range(len(periods)):
+        df['RSI_{i}'.format(i=periods[i])] = talib.RSI(
+            df['close'],
+            timeperiod = periods[i]
+        )
     
- 
+    #------------------------------------------------------------#
+    # Slope :
+    #------------------------------------------------------------#
+
+    df['Slope_4'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=4)
+    x = df.iloc[:2:]
+    y = df.iloc[:2,2]
+    print(y)
+    print(x)
+    #print(df)
