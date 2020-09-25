@@ -61,12 +61,22 @@ def Heiken_Ashi(prices):
     
 
 if __name__ == "__main__":
-    df = pd.read_csv('dataset/EURUSD_H1.csv')
-    df.set_index('date', inplace=True, drop=True)
-    df = df.iloc[80000:]
-    df = pd.DataFrame(data=df, dtype=np.float64)   
-    df_default = df.copy()
     
+    data = pd.read_csv('dataset/EURUSD_H1.csv')
+    data.set_index('date', inplace=True, drop=True)
+    #data = data.iloc[80000:,:]
+    data = pd.DataFrame(data=data, dtype=np.float64) 
+
+    df = data.copy(deep=False)
+    df.drop(df.tail(24).index,inplace=True)
+
+    label = data[['open','close']].copy(deep=False)
+    #label = data[['open'].copy(deep=False)
+    label = label.iloc[24:,:]
+    label.reset_index(drop=True,inplace=True)
+    label.index = df.index
+
+
     #------------------------------------------------------------#
     # Momentum (MOM) :
     #------------------------------------------------------------#
@@ -216,6 +226,43 @@ if __name__ == "__main__":
 
     df['Slope_4'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=4)
     df = df.fillna(method='bfill')
+
+
+    ###################################################################################
+
+    x = df.iloc[:80000,:].values
+    y = label.iloc[:80000,:].values
+
+    test_x = df.iloc[80000:,:].values
+    test_y = label.iloc[80000:,:].values
+
+    from sklearn.preprocessing import StandardScaler
+    import matplotlib.pyplot as plt
+    from sklearn.datasets import make_regression
+    from sklearn.svm import LinearSVR
+    from sklearn.multioutput import MultiOutputRegressor
+    from sklearn.model_selection import cross_val_score
+    from sklearn.model_selection import RepeatedKFold
+    from numpy import mean
+    from numpy import std
+    from numpy import absolute
+    from sklearn.metrics import mean_absolute_error
+
+
+    #a,b = make_regression(n_samples=1000, n_features=10, n_informative=5, n_targets=2, random_state=1)
+
+    model = LinearSVR(max_iter=10000)
+    wrapper = MultiOutputRegressor(model)
+    #cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+    #n_scores = cross_val_score(wrapper, x, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1, error_score='raise')
+
+    #n_scores = absolute(n_scores)
+    #print('Result: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
+    wrapper.fit(x,y)
+    yhat = wrapper.predict(test_x)
+    print(100-mean_absolute_error(test_y, yhat, multioutput='raw_values'))
+    print(test_y.head(20))
+    print(yhat.head(20))
 
 
 
