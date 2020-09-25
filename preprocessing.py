@@ -64,7 +64,7 @@ if __name__ == "__main__":
     
     data = pd.read_csv('dataset/EURUSD_H1.csv')
     data.set_index('date', inplace=True, drop=True)
-    #data = data.iloc[80000:,:]
+    data = data.iloc[70000:,:]
     data = pd.DataFrame(data=data, dtype=np.float64) 
 
     df = data.copy(deep=False)
@@ -86,7 +86,8 @@ if __name__ == "__main__":
     for i in range(0,len(periods)):
         df['MOM_{i}'.format(i=periods[i])] = talib.MOM(df.close.values,timeperiod = periods[i])
 
- 
+    print("--------- Mometum Successful ---------")
+
     #------------------------------------------------------------#
     # Stochastic oscillator (STOCH):
     #------------------------------------------------------------#
@@ -102,6 +103,8 @@ if __name__ == "__main__":
         df['K_{i}'.format(i=periods[i])] = K
         df['D_{i}'.format(i=periods[i])] = D
 
+    print("--------- Stochastic oscillator Successful ---------")
+
     #------------------------------------------------------------#
     # Williams %R (WILLR) :
     #------------------------------------------------------------#
@@ -115,6 +118,8 @@ if __name__ == "__main__":
             timeperiod = periods[i]
             )
 
+    print("--------- Williams %R Successful ---------")
+
     #------------------------------------------------------------#
     #  Rate of change (PROCP) :
     #------------------------------------------------------------#
@@ -126,6 +131,8 @@ if __name__ == "__main__":
             timeperiod = periods[i]
         )
 
+    print("--------- Rate of change Successful ---------")
+
     #------------------------------------------------------------#
     # Weighted Closing Price (WPC) :
     #------------------------------------------------------------#
@@ -135,6 +142,8 @@ if __name__ == "__main__":
             low = df['low'],
             close = df['close']
         )
+
+    print("--------- Weighted Closing Price Successful ---------")
 
     #------------------------------------------------------------#
     # Accumulation Distribution Line (ADL) :
@@ -146,6 +155,8 @@ if __name__ == "__main__":
         close = df['close'],
         volume = df['volume']
     )
+
+    print("--------- Accumulation Distribution Line Successful ---------")
 
     #------------------------------------------------------------#
     # Accumulation Distribution Oscillator (ADOSC) :
@@ -163,6 +174,8 @@ if __name__ == "__main__":
             slowperiod = periods_slow[i]
         )
     
+    print("--------- Accumulation Distribution Line Successful ---------")
+
     #------------------------------------------------------------#
     # Moving Average Convergence/Divergence (MACD) :
     #------------------------------------------------------------#
@@ -179,6 +192,8 @@ if __name__ == "__main__":
     df['MACD_his_12,26'] = indicator_MACD.macd_diff()
     df['MACD_signal_12,26'] = indicator_MACD.macd_signal()
 
+    print("--------- Moving Average Convergence/Divergence Successful ---------")
+    
     #------------------------------------------------------------#
     # Commodity Channel Index (CCI) :
     #------------------------------------------------------------#
@@ -190,6 +205,8 @@ if __name__ == "__main__":
         timeperiod = 15        
     )
 
+    print("--------- Commodity Channel Index Successful ---------")
+
     #------------------------------------------------------------#
     # Bollinger Bands (BBANDS) :
     #------------------------------------------------------------#
@@ -198,6 +215,8 @@ if __name__ == "__main__":
     df['bb_bbm_15'] = indicator_bb.bollinger_mavg()
     df['bb_bbh_15'] = indicator_bb.bollinger_hband()
     df['bb_bbl_15'] = indicator_bb.bollinger_lband()
+
+    print("--------- Bollinger Bands Successful ---------")
 
     #------------------------------------------------------------#
     # Heikin Ashi :
@@ -208,6 +227,8 @@ if __name__ == "__main__":
     df['HA_high'] = High
     df['HA_low'] = Low
     df['HA_close'] = Close
+
+    print("--------- Heikin Ashi Successful ---------")
 
     #------------------------------------------------------------#
     # Relative Strange index (RSI) :
@@ -220,6 +241,8 @@ if __name__ == "__main__":
             timeperiod = periods[i]
         )
     
+    print("--------- Relative Strange index Successful ---------")
+
     #------------------------------------------------------------#
     # Slope :
     #------------------------------------------------------------#
@@ -227,43 +250,47 @@ if __name__ == "__main__":
     df['Slope_4'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=4)
     df = df.fillna(method='bfill')
 
+    print("--------- Slope Successful ---------")
 
     ###################################################################################
 
-    x = df.iloc[:80000,:].values
-    y = label.iloc[:80000,:].values
-
-    test_x = df.iloc[80000:,:].values
-    test_y = label.iloc[80000:,:].values
 
     from sklearn.preprocessing import StandardScaler
     import matplotlib.pyplot as plt
     from sklearn.datasets import make_regression
     from sklearn.svm import LinearSVR
+    from sklearn.svm import SVR
     from sklearn.multioutput import MultiOutputRegressor
     from sklearn.model_selection import cross_val_score
     from sklearn.model_selection import RepeatedKFold
     from numpy import mean
     from numpy import std
     from numpy import absolute
-    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import r2_score,mean_squared_error
+    from sklearn.model_selection import train_test_split
+
+    sc_X = StandardScaler()
+    sc_y = StandardScaler()
+    x = sc_X.fit_transform(df.values)
+    y = sc_y.fit_transform(label.values)
+
+    x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2,random_state=42)
+   # print(len(x_train))
+   # print((x_test))
 
 
-    #a,b = make_regression(n_samples=1000, n_features=10, n_informative=5, n_targets=2, random_state=1)
-
-    model = LinearSVR(max_iter=10000)
+    model = SVR(kernel='rbf',gamma=1e-8)
     wrapper = MultiOutputRegressor(model)
-    #cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
-    #n_scores = cross_val_score(wrapper, x, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1, error_score='raise')
+    wrapper.fit(x_train,y_train)
 
-    #n_scores = absolute(n_scores)
-    #print('Result: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
-    wrapper.fit(x,y)
-    yhat = wrapper.predict(test_x)
-    print(100-mean_absolute_error(test_y, yhat, multioutput='raw_values'))
-    print(test_y.head(20))
-    print(yhat.head(20))
+    yhat = wrapper.predict(x_test)
 
+    mse = mean_squared_error(y_test,yhat)
+    yhat = sc_y.inverse_transform(yhat)
+    y_test = sc_y.inverse_transform(y_test)
+    print(np.sqrt(mse))
+    print("Predict ",yhat[:5,:])
+    print("Acc ",y_test[:5,:])
 
 
 
