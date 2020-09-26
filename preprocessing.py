@@ -64,7 +64,7 @@ if __name__ == "__main__":
     
     data = pd.read_csv('dataset/EURUSD_H1.csv')
     data.set_index('date', inplace=True, drop=True)
-    data = data.iloc[70000:,:]
+    data = data.iloc[60000:,:]
     data = pd.DataFrame(data=data, dtype=np.float64) 
 
     df = data.copy(deep=False)
@@ -274,23 +274,27 @@ if __name__ == "__main__":
     x = sc_X.fit_transform(df.values)
     y = sc_y.fit_transform(label.values)
 
-    x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2,random_state=42)
+    x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.05)
    # print(len(x_train))
    # print((x_test))
 
 
-    model = SVR(kernel='rbf',gamma=1e-8)
+    model = SVR(kernel='rbf',gamma=0.1)
     wrapper = MultiOutputRegressor(model)
     wrapper.fit(x_train,y_train)
 
     yhat = wrapper.predict(x_test)
 
     mse = mean_squared_error(y_test,yhat)
+    print(r2_score(yhat,y_test))
     yhat = sc_y.inverse_transform(yhat)
     y_test = sc_y.inverse_transform(y_test)
-    print(np.sqrt(mse))
-    print("Predict ",yhat[:5,:])
-    print("Acc ",y_test[:5,:])
+    print("mse = ",mse)
+    print("sqrt(mse) = ",np.sqrt(mse))
+    for i in range(len(y_test)):
+        err = abs(y_test[i]-yhat[i])
+        print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
+        #print("Acc ",y_test[:5,:])
 
 
 
