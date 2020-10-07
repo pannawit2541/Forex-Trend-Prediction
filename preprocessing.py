@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 
 import talib
-#from finta import TA 
+
 from ta.volatility import BollingerBands
 from ta.trend import MACD
 
@@ -64,24 +64,28 @@ if __name__ == "__main__":
     
     data = pd.read_csv('dataset/EURUSD_H1.csv')
     data.set_index('date', inplace=True, drop=True)
-    data = data.iloc[60000:,:]
+    data = data.iloc[70000:,:]
+    print(len(data))
     data = pd.DataFrame(data=data, dtype=np.float64) 
 
     df = data.copy(deep=False)
     df.drop(df.tail(24).index,inplace=True)
 
     label = data[['open','close']].copy(deep=False)
+    #label = data[['high','low']].copy(deep=False)
     #label = data[['open'].copy(deep=False)
     label = label.iloc[24:,:]
+
     label.reset_index(drop=True,inplace=True)
     label.index = df.index
+
 
 
     #------------------------------------------------------------#
     # Momentum (MOM) :
     #------------------------------------------------------------#
 
-    periods = [12,24,48,60,72,84]
+    periods = [3,4,5,8,9,10]
 
     for i in range(0,len(periods)):
         df['MOM_{i}'.format(i=periods[i])] = talib.MOM(df.close.values,timeperiod = periods[i])
@@ -92,7 +96,7 @@ if __name__ == "__main__":
     # Stochastic oscillator (STOCH):
     #------------------------------------------------------------#
 
-    periods = [12,24,48,60,72,84]
+    periods = [3,4,5,8,9,10]
     for i in range(0,len(periods)):
         K,D = talib.STOCH(
             close = df['close'],
@@ -109,7 +113,7 @@ if __name__ == "__main__":
     # Williams %R (WILLR) :
     #------------------------------------------------------------#
     
-    periods = [8,9,10,11,12]
+    periods = [6,7,8,9, 10]
     for i in range(len(periods)):
         df['WILLR_{i}'.format(i=periods[i])] = talib.WILLR(
             high = df['high'],
@@ -162,8 +166,8 @@ if __name__ == "__main__":
     # Accumulation Distribution Oscillator (ADOSC) :
     #------------------------------------------------------------#
 
-    periods_fast = [3,6,9,12]
-    periods_slow = [10,13,16,19]
+    periods_fast = [2,3,4,5]
+    periods_slow = [10,12,14,16]
     for i in range(len(periods_fast)):
         df['ADOSC_{i},{j}'.format(i=periods_fast[i],j=periods_slow[i])] = talib.ADOSC(
             high = df['high'],
@@ -234,7 +238,7 @@ if __name__ == "__main__":
     # Relative Strange index (RSI) :
     #------------------------------------------------------------#
 
-    periods = [12,24,48,60]
+    periods = [6,8,10,12]
     for i in range(len(periods)):
         df['RSI_{i}'.format(i=periods[i])] = talib.RSI(
             df['close'],
@@ -261,8 +265,9 @@ if __name__ == "__main__":
     from sklearn.svm import LinearSVR
     from sklearn.svm import SVR
     from sklearn.multioutput import MultiOutputRegressor
-    from sklearn.model_selection import cross_val_score
-    from sklearn.model_selection import RepeatedKFold
+
+    from sklearn.model_selection import KFold
+
     from numpy import mean
     from numpy import std
     from numpy import absolute
@@ -275,27 +280,41 @@ if __name__ == "__main__":
     y = sc_y.fit_transform(label.values)
 
     x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.05)
-   # print(len(x_train))
-   # print((x_test))
+
+    scores = []
+    model = SVR(kernel='poly', degree=2,coef0=0.1)
+    best_svr = MultiOutputRegressor(model)
+    best_svr.fit(x_train,y_train)
+    cv = KFold(n_splits=10,shuffle=False)
+    for train_index, test_index in cv.split(x_train):
+        print("Train Index: ", train_index, "\n")
+        print("Test Index: ", test_index)
+        X_train, X_test, y_train, y_test = x_train[train_index], x_train[test_index], y_train[train_index], y_train[test_index]
+        best_svr.fit(X_train, y_train)
+        scores.append(best_svr.score(X_test, y_test))
 
 
-    model = SVR(kernel='rbf',gamma=0.1)
-    wrapper = MultiOutputRegressor(model)
-    wrapper.fit(x_train,y_train)
 
-    yhat = wrapper.predict(x_test)
+    # #model = SVR(kernel='rbf', gamma=0.1)
+    # model = SVR(kernel='poly', degree=2,coef0=0.1)
+    # wrapper = MultiOutputRegressor(model)
+    # wrapper.fit(x_train,y_train)
+
+    yhat = best_svr.predict(x_test)
+
+    yhat = sc_y.inverse_transform(yhat)
+    y_test = sc_y.inverse_transform(y_test)
 
     mse = mean_squared_error(y_test,yhat)
     print(r2_score(yhat,y_test))
-    yhat = sc_y.inverse_transform(yhat)
-    y_test = sc_y.inverse_transform(y_test)
     print("mse = ",mse)
     print("sqrt(mse) = ",np.sqrt(mse))
+    
+    sum_err = []
     for i in range(len(y_test)):
-        err = abs(y_test[i]-yhat[i])
-        print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
+        err = abs(y_test[i]-yhat[i])*10e4
+        sum_err.append(err)
+        #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
         #print("Acc ",y_test[:5,:])
 
-
-
-    
+    print(mean(sum_err))
