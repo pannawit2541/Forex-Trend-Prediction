@@ -11,85 +11,76 @@ import plotly as py
 from plotly import tools
 import plotly.graph_objects as go
 
+def preprocessing(file,s=0,create_file=False):
 
-def create_candlestick(df) :
-
-    trace_0 = go.Ohlc(x=df.index,
-                    open=df['Open'],
-                    high=df['High'],
-                    low=df['Low'],
-                    close=df['Close'],
-                    name='Currency Quote')
-
-    fig = tools.make_subplots(rows=1,cols=1,shared_xaxes=True)
-    fig.append_trace(trace_0,1,1)
-
-    py.offline.plot(fig,filename='Candlestick_chart')
-
-
-def Heiken_Ashi(prices):
- 
     #################################################
 
-    #prices  : dataframe of prices
-    #periods : periods of which to create the candles
+    #file  : name of data_set
+    #s : start sample at 's' 
 
     #return  : Heiken_Ashi OHLC candles
 
-    #################################################
+    ################################################# 
 
-
-    HA_close = prices[['open','high','low','close']].sum(axis = 1)/4
-
-    HA_open = HA_close.copy()
-
-    HA_open.iloc[0] = HA_close.iloc[0]
-
-    HA_high = HA_close.copy()
-
-    HA_low = HA_close.copy()
-
-    for i in range(1,len(prices)):
-        
-        HA_open.iloc[i] = (HA_open.iloc[i-1] + HA_close.iloc[i-1])/2
-
-        HA_high.iloc[i] = np.array([prices.high.iloc[i], HA_open.iloc[i], HA_close.iloc[i]]).max()
-
-        HA_low.iloc[i] = np.array([prices.low.iloc[i], HA_open.iloc[i], HA_close.iloc[i]]).min()
-
-    return HA_open,HA_high,HA_low,HA_close
-    
-
-if __name__ == "__main__":
-    
-    data = pd.read_csv('dataset/EURUSD_H1.csv')
+    data = pd.read_csv(file)
     data.set_index('date', inplace=True, drop=True)
-    data = data.iloc[70000:,:]
-    print(len(data))
+    data = data.iloc[s:,:]
     data = pd.DataFrame(data=data, dtype=np.float64) 
 
     df = data.copy(deep=False)
     df.drop(df.tail(24).index,inplace=True)
-
+  
     label = data[['open','close']].copy(deep=False)
-    #label = data[['high','low']].copy(deep=False)
-    #label = data[['open'].copy(deep=False)
     label = label.iloc[24:,:]
+ 
 
     label.reset_index(drop=True,inplace=True)
     label.index = df.index
 
+    label.rename(columns={"open": "open_24", "close": "close_24"}, inplace=True)
 
+    def Heiken_Ashi(prices):
+ 
+        #################################################
+
+        #prices  : dataframe of prices
+        #periods : periods of which to create the candles
+
+        #return  : Heiken_Ashi OHLC candles
+
+        #################################################
+
+
+        HA_close = prices[['open','high','low','close']].sum(axis = 1)/4
+
+        HA_open = HA_close.copy()
+
+        HA_open.iloc[0] = HA_close.iloc[0]
+
+        HA_high = HA_close.copy()
+
+        HA_low = HA_close.copy()
+
+        for i in range(1,len(prices)):
+            
+            HA_open.iloc[i] = (HA_open.iloc[i-1] + HA_close.iloc[i-1])/2
+
+            HA_high.iloc[i] = np.array([prices.high.iloc[i], HA_open.iloc[i], HA_close.iloc[i]]).max()
+
+            HA_low.iloc[i] = np.array([prices.low.iloc[i], HA_open.iloc[i], HA_close.iloc[i]]).min()
+
+        return HA_open,HA_high,HA_low,HA_close
 
     #------------------------------------------------------------#
     # Momentum (MOM) :
     #------------------------------------------------------------#
 
     periods = [3,4,5,8,9,10]
+    #periods = [x+20 for x in periods]
 
     for i in range(0,len(periods)):
         df['MOM_{i}'.format(i=periods[i])] = talib.MOM(df.close.values,timeperiod = periods[i])
-
+    print(periods)
     print("--------- Mometum Successful ---------")
 
     #------------------------------------------------------------#
@@ -97,6 +88,7 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
 
     periods = [3,4,5,8,9,10]
+    #periods = [x+20 for x in periods]
     for i in range(0,len(periods)):
         K,D = talib.STOCH(
             close = df['close'],
@@ -107,6 +99,7 @@ if __name__ == "__main__":
         df['K_{i}'.format(i=periods[i])] = K
         df['D_{i}'.format(i=periods[i])] = D
 
+    print(periods)
     print("--------- Stochastic oscillator Successful ---------")
 
     #------------------------------------------------------------#
@@ -114,6 +107,7 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
     
     periods = [6,7,8,9, 10]
+    #periods = [x+20 for x in periods]
     for i in range(len(periods)):
         df['WILLR_{i}'.format(i=periods[i])] = talib.WILLR(
             high = df['high'],
@@ -121,7 +115,7 @@ if __name__ == "__main__":
             close = df['close'],
             timeperiod = periods[i]
             )
-
+    print(periods)
     print("--------- Williams %R Successful ---------")
 
     #------------------------------------------------------------#
@@ -129,12 +123,14 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
 
     periods = [12,13,14,15]
+    #periods = [x+20 for x in periods]
     for i in range(len(periods)):
         df['ROCP_{i}'.format(i=periods[i])] = talib.ROCP(
             df['close'],
             timeperiod = periods[i]
         )
 
+    print(periods)
     print("--------- Rate of change Successful ---------")
 
     #------------------------------------------------------------#
@@ -167,7 +163,9 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
 
     periods_fast = [2,3,4,5]
+    #periods_fast = [x+20 for x in periods_fast]
     periods_slow = [10,12,14,16]
+    #periods_slow = [x+20 for x in periods_slow]
     for i in range(len(periods_fast)):
         df['ADOSC_{i},{j}'.format(i=periods_fast[i],j=periods_slow[i])] = talib.ADOSC(
             high = df['high'],
@@ -239,82 +237,36 @@ if __name__ == "__main__":
     #------------------------------------------------------------#
 
     periods = [6,8,10,12]
+    #periods = [x+20 for x in periods]
     for i in range(len(periods)):
         df['RSI_{i}'.format(i=periods[i])] = talib.RSI(
             df['close'],
             timeperiod = periods[i]
         )
     
+    print(periods)
     print("--------- Relative Strange index Successful ---------")
 
     #------------------------------------------------------------#
     # Slope :
     #------------------------------------------------------------#
 
-    df['Slope_4'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=4)
+    df['Slope_6'] = talib.LINEARREG_SLOPE(df['close'], timeperiod=6)
     df = df.fillna(method='bfill')
 
     print("--------- Slope Successful ---------")
 
-    ###################################################################################
-
-
-    from sklearn.preprocessing import StandardScaler
-    import matplotlib.pyplot as plt
-    from sklearn.datasets import make_regression
-    from sklearn.svm import LinearSVR
-    from sklearn.svm import SVR
-    from sklearn.multioutput import MultiOutputRegressor
-
-    from sklearn.model_selection import KFold
-
-    from numpy import mean
-    from numpy import std
-    from numpy import absolute
-    from sklearn.metrics import r2_score,mean_squared_error
-    from sklearn.model_selection import train_test_split
-
-    sc_X = StandardScaler()
-    sc_y = StandardScaler()
-    x = sc_X.fit_transform(df.values)
-    y = sc_y.fit_transform(label.values)
-
-    x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.05)
-
-    scores = []
-    model = SVR(kernel='poly', degree=2,coef0=0.1)
-    best_svr = MultiOutputRegressor(model)
-    best_svr.fit(x_train,y_train)
-    cv = KFold(n_splits=10,shuffle=False)
-    for train_index, test_index in cv.split(x_train):
-        print("Train Index: ", train_index, "\n")
-        print("Test Index: ", test_index)
-        X_train, X_test, y_train, y_test = x_train[train_index], x_train[test_index], y_train[train_index], y_train[test_index]
-        best_svr.fit(X_train, y_train)
-        scores.append(best_svr.score(X_test, y_test))
-
-
-
-    # #model = SVR(kernel='rbf', gamma=0.1)
-    # model = SVR(kernel='poly', degree=2,coef0=0.1)
-    # wrapper = MultiOutputRegressor(model)
-    # wrapper.fit(x_train,y_train)
-
-    yhat = best_svr.predict(x_test)
-
-    yhat = sc_y.inverse_transform(yhat)
-    y_test = sc_y.inverse_transform(y_test)
-
-    mse = mean_squared_error(y_test,yhat)
-    print(r2_score(yhat,y_test))
-    print("mse = ",mse)
-    print("sqrt(mse) = ",np.sqrt(mse))
     
-    sum_err = []
-    for i in range(len(y_test)):
-        err = abs(y_test[i]-yhat[i])*10e4
-        sum_err.append(err)
-        #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
-        #print("Acc ",y_test[:5,:])
+    df = df.drop(['volume'],axis=1)
 
-    print(mean(sum_err))
+    #----------- Create File .csv------------
+    if create_file == True:
+        _csv = pd.concat([df,label],axis = 1)
+        _csv.to_csv(r'dataset/EURUSD_features.csv')
+
+    return df,label
+
+
+
+file = 'dataset/EURUSD_H1.csv'
+X,Y = preprocessing(file,create_file=True)
