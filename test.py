@@ -72,23 +72,24 @@ scores = []
 i = 1
 for train_index, test_index in cv.split(input_train):
         print("K-folds at : ",i)
-        X_train, X_test, y_train, y_test = input_train[train_index], input_train[test_index], output_train[train_index], output_train[test_index]
-        best_svr.fit(X_train, y_train)
-        
-        '''
-                - Cross validate 
-        '''
-        scores.append(best_svr.score(X_test, y_test))
-        print("scores : ",best_svr.score(X_test, y_test))
+        if(i>=3):
+            X_train, X_test, y_train, y_test = input_train[train_index], input_train[test_index], output_train[train_index], output_train[test_index]
+            best_svr.fit(X_train, y_train)
+            
+            '''
+                    - Cross validate 
+            '''
+            scores.append(best_svr.score(X_test, y_test))
+            print("scores : ",best_svr.score(X_test, y_test))
 
-        '''
-                - MAE
-        '''
-        yhat = best_svr.predict(X_test)
-        yhat = sc_y.inverse_transform(yhat)
-        y_test = sc_y.inverse_transform(y_test)
-        print("MAE : ",mean_absolute_error(y_test, yhat, multioutput='raw_values'))
-        joblib.dump(best_svr, filename)
+            '''
+                    - MAE
+            '''
+            yhat = best_svr.predict(X_test)
+            yhat = sc_y.inverse_transform(yhat)
+            y_test = sc_y.inverse_transform(y_test)
+            print("MAE : ",mean_absolute_error(y_test, yhat, multioutput='raw_values'))
+            joblib.dump(best_svr, filename)
         i+=1
 
 yhat = best_svr.predict(input_test)
