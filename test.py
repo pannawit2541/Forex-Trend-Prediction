@@ -16,7 +16,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = 'dataset\GBPUSD_features.csv'
+file = r'dataset\USDJPY_features.csv'
 data = pd.read_csv(file)
 data.set_index('date', inplace=True, drop=True)
 
@@ -42,14 +42,14 @@ labels = labels.iloc[24:, :]
 '''
     - scale output with 1 pip
 '''
-labels = labels*10000
+labels = labels*100
 ################################################
 
 
 labels.reset_index(drop=True, inplace=True)
 labels.index = features.index
-# print(labels.head())
-# print(features.head())
+print(labels.head())
+print(features.head())
 
 
 sc_X = StandardScaler()
@@ -63,7 +63,7 @@ print("train shape : {:.0f}".format(
     input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/GBPUSD_SVR_1.joblib'
+filename = 'model/USDJPY_SVR_1.joblib'
 
 model = SVR(kernel='rbf', gamma='auto', C=25,
             epsilon=0.0001, verbose=2, max_iter=500000)
@@ -108,6 +108,6 @@ for i in range(len(y_test)):
     #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
 print("Crossvalidation score :", np.mean(scores))
 print("Abs_err = ", r2_score(yhat, y_test))
-print("mse = ", mse/10000)
+print("mse = ", mse/100)
 print("sqrt(mse) = ", np.sqrt(mse))
 print("Pips err = ", mean(sum_err), "\n")

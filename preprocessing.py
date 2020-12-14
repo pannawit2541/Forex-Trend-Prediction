@@ -266,8 +266,8 @@ def preprocessing(file, s=0, create_file=False):
     # ----------- Create File .csv------------
     if create_file == True:
         _csv = pd.concat([df, label], axis=1)
-        _csv.to_csv(r'dataset/GBPUSD_features.csv')
+        _csv.to_csv(r'dataset/USDJPY_features.csv')
 
     return df, label
 
-preprocessing(file='dataset\GBPUSD_H1.csv',create_file=True)
+preprocessing(file=r'dataset\USDJPY_H1.csv',create_file=True)
