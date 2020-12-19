@@ -108,6 +108,7 @@ for i in range(len(y_test)):
     #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
 print("Crossvalidation score :", np.mean(scores))
 print("Abs_err = ", r2_score(yhat, y_test))
-print("mse = ", mse/100)
+print("mse = ", mse/100
+)
 print("sqrt(mse) = ", np.sqrt(mse))
 print("Pips err = ", mean(sum_err), "\n")
