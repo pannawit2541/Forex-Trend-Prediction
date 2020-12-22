@@ -44,10 +44,11 @@ def data_historical(c_pair):
     else:
         return make_response("", 404)
 
-# @app.route('/<string:c_pair>/predict', methods=['GET'])
-# def predict_historical(c_pair):
-#     #ollection = db['{}_predict'.format(c_pair)]
-#     if request.method == 'GET':
+@app.route('/<string:c_pair>/predict', methods=['GET'])
+def predict_historical(c_pair):
+#     #collection = db['{}_predict'.format(c_pair)]
+    if request.method == 'GET':
+        
         
 #         return make_response(jsonify(data), 200)
 #     else:

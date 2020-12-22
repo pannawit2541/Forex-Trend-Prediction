@@ -1,12 +1,9 @@
 <template>
   <div id="GBPUSD">
-    <li>GBP/USD</li>
-    <li>H1</li>
-    <li>1.22 3.22 4.22 6.22</li>
     <trading-vue
       :data="chart"
       :width="0.7*this.width"
-      :height="0.8*this.height"
+      :height="0.7*this.height"
       :color-back="colors.colorBack"
       :color-grid="colors.colorGrid" 
       :color-text="colors.colorText"
@@ -81,8 +78,8 @@ export default {
         colorBack: "#fff",
         colorGrid: "#eee",
         colorText: "#333",
-        colorCandleUp: "#337e92",
-        colorCadleDown: "#fc6d78"
+        colorCandleUp: "#116371",
+        colorCadleDown: "#de5535"
       },
     };
   },

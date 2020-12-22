@@ -1,11 +1,9 @@
 <template>
   <div id="EURUSD">
-    <li>EURUSD</li>
-    <li>H1</li>
     <trading-vue
       :data="chart"
       :width="0.7 * this.width"
-      :height="0.8 * this.height"
+      :height="0.7 * this.height"
       :color-back="colors.colorBack"
       :color-grid="colors.colorGrid"
       :color-text="colors.colorText"
@@ -80,9 +78,9 @@ export default {
       colors: {
         colorBack: "#fff",
         colorGrid: "#eee",
-        colorText: "#333",
-        colorCandleUp: "#337e92",
-        colorCadleDown: "#fc6d78",
+        colorText: "#013e41",
+        colorCandleUp: "#116371",
+        colorCadleDown: "#de5535"
       },
     };
   },
