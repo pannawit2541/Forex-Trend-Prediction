@@ -2,8 +2,8 @@
   <div id="EURUSD">
     <trading-vue
       :data="chart"
-      :width="0.7 * this.width"
-      :height="0.7 * this.height"
+      :width="0.7* width"
+      :height="0.7 * height"
       :color-back="colors.colorBack"
       :color-grid="colors.colorGrid"
       :color-text="colors.colorText"
@@ -63,11 +63,13 @@ export default {
     this.historical_data();
   },
   mounted() {
+    // this.width = document.getElementById('width').offsetWidth
     window.addEventListener("resize", this.onResize);
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.onResize);
   },
+
   data() {
     return {
       test: {},

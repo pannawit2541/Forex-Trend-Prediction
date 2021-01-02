@@ -21,16 +21,15 @@ def preprocessing(file, s=0, create_file=False):
     # return  : Heiken_Ashi OHLC candles
 
     #################################################
-    data = file
-    data.set_index('date', inplace=True, drop=True)
-    print(data)
-    data = data.iloc[s:, :]
-    data = pd.DataFrame(data=data, dtype=np.float64)
+    #data = file.copy(deep=False)
+    #data.set_index('date', inplace=True, drop=True)
+    # data = data.iloc[s:, :]
+    # data = pd.DataFrame(data=data, dtype=np.float64)
 
-    df = data.copy(deep=False)
+    df = file.copy(deep=False)
     df.drop(df.tail(24).index, inplace=True)
 
-    label = data[['open', 'close']].copy(deep=False)
+    label = file[['open', 'close']].copy(deep=False)
     label = label.iloc[24:, :]
 
     label.reset_index(drop=True, inplace=True)
