@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <div class="columns">
+
+    <div class="columns is-gapless">
       <div class="column is-2"><side-bar-component /></div>
       <div class="column">
         <nav-bar-component />
         <router-view />
-        </div>
+      </div>
     </div>
-    
   </div>
 </template>
 
 <script>
-// import NavBarComponent from './components/NavBarComponent'
+
 import NavBarComponent from "./components/NavBarComponent.vue";
 import SideBarComponent from "./components/SideBarComponent.vue";
 
