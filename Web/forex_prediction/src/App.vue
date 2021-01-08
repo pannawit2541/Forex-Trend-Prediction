@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-
-    <div class="columns is-gapless">
+   
+    <div class="columns is-gapless is-mobile">
       <div class="column is-2"><side-bar-component /></div>
       <div class="column">
         <nav-bar-component />
@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
 import NavBarComponent from "./components/NavBarComponent.vue";
 import SideBarComponent from "./components/SideBarComponent.vue";
 
