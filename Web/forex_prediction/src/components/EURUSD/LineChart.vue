@@ -25,7 +25,7 @@ export default {
             pointBackgroundColor: "#63dbff"
           },
           {
-            label: "Predictline",
+            label: "Realline",
             data: [4, 12, 3, 7, 1, 5],
             backgroundColor: "transparent",
             borderColor: "#ffa8c4",

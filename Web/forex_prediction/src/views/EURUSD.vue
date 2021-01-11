@@ -10,6 +10,12 @@
                 <p class="title is-5  has-text-grey-light">MAE</p>
                 <div>
                   <p class="title is-3">{{ eval.mae }} pips</p>
+                  <fa-icon
+                    :icon="['fas', 'coins']"
+                    style="color:Tomato"
+                    size="3x"
+                  >
+                  </fa-icon>
                 </div>
                 <div class="content">
                   <span>
@@ -52,6 +58,12 @@
                 <p class="title is-5  has-text-grey-light">Trend Accuracy</p>
                 <div>
                   <p class="title is-3  ">{{ eval.trendAcc }} %</p>
+                  <fa-icon
+                    :icon="['fas', 'chart-bar']"
+                    style="color:#55D8FB"
+                    size="3x"
+                  >
+                  </fa-icon>
                 </div>
                 <div class="content ">
                   <span>
@@ -74,7 +86,7 @@
           <article class="tile is-child box">
             <p class="title is-5  has-text-grey-darker">Moving Average</p>
             <div class="content">
-              <LineChart/>
+              <LineChart />
             </div>
           </article>
         </div>
@@ -84,7 +96,7 @@
             <div class="content"></div>
             <p class="title is-5  has-text-grey-darker">Trend Accuracy</p>
             <div class="content">
-              <BarChart/>
+              <BarChart />
             </div>
           </article>
         </div>
@@ -118,16 +130,16 @@
 <script>
 import TradingVue from "trading-vue-js";
 import Data from "../../data/data.json";
-import BarChart from "../components/EURUSD/BarChart"
-import LineChart from "../components/EURUSD/LineChart"
+import BarChart from "../components/EURUSD/BarChart";
+import LineChart from "../components/EURUSD/LineChart";
 
 export default {
   name: "EURUSD",
-  components: { 
+  components: {
     TradingVue,
     BarChart,
-    LineChart
-    },
+    LineChart,
+  },
   methods: {
     onResize() {
       this.width = window.innerWidth;
