@@ -128,11 +128,11 @@
 </template>
 
 <script>
-import TradingVue from "trading-vue-js";
-import Data from "../../data/data.json";
 import BarChart from "../components/EURUSD/BarChart";
 import LineChart from "../components/EURUSD/LineChart";
 
+import TradingVue from "trading-vue-js";
+import Data from "../../data/data.json";
 export default {
   name: "EURUSD",
   components: {
@@ -154,7 +154,7 @@ export default {
   },
   data() {
     return {
-      titleTxt: "",
+      titleTxt: "EUR/USD",
       chart: Data,
       width: window.innerWidth,
       height: window.innerHeight,
