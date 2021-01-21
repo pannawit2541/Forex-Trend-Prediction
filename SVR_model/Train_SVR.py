@@ -16,9 +16,10 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = r'dataset\features\EURUSD.csv'
+file = r'dataset\features\EURUSD_3.csv'
 df = pd.read_csv(file)
 df.set_index('date', inplace=True, drop=True)
+
 
 ################################################
 '''
@@ -26,11 +27,13 @@ df.set_index('date', inplace=True, drop=True)
     - 4 y * 356 d * 24 hr = 34,176
 
 '''
-features = df[['open', 'high', 'low', 'close','bb_bbm_6',
-       'bb_bbh_6', 'bb_bbl_6', 'bb_bbm_12', 'bb_bbh_12', 'bb_bbl_12',
-       'bb_bbm_18', 'bb_bbh_18', 'bb_bbl_18', 'bb_bbm_24', 'bb_bbh_24',
-       'bb_bbl_24', 'bb_bbm_30', 'bb_bbh_30', 'bb_bbl_30', 'bb_bbm_36',
-       'bb_bbh_36', 'bb_bbl_36']].copy()
+features = pd.read_csv(r'dataset\features\EURUSD_pca.csv')
+# features = df.copy()
+# features = features.drop(['open_24', 'close_24'], axis=1)
+# features = features[['open','high','low','close','EMA_6','EMA_12','EMA_24','bb_bbm_6', 'bb_bbh_6', 'bb_bbl_6',
+#        'bb_bbm_12', 'bb_bbh_12', 'bb_bbl_12', 'bb_bbm_24', 'bb_bbh_24',
+#        'bb_bbl_24']].copy()
+print(features.shape)
 targets = df[['open_24', 'close_24']].copy()
 ################################################
 '''
@@ -51,9 +54,9 @@ print("train shape : {:.0f}".format(
     input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/EURUSD_fix2.joblib'
+filename = 'model/test_fix2.joblib'
 
-model = SVR(kernel='rbf', gamma='scale', C=25,
+model = SVR(kernel='rbf', gamma='auto', C=25,
             epsilon=0.0001, verbose=2)
 
 best_svr = MultiOutputRegressor(model)

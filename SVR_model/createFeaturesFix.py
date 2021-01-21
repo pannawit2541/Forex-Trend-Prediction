@@ -23,7 +23,7 @@ def preprocessing(file, s=0, create_file=False):
     targets = data[['open_24', 'close_24']].copy(deep=False)
     targets = pd.DataFrame(data=targets, dtype=np.float64)
 
-    periods = [6, 12, 18, 24, 30, 36]
+    periods = [6, 12, 24]
 
     #------------------------------------------------------------#
     # Create day of week :
@@ -78,11 +78,21 @@ def preprocessing(file, s=0, create_file=False):
     print("--------- Moving Average Convergence/Divergence Successful ---------")
 
     #------------------------------------------------------------#
-    # Bollinger Bands (BBANDS) :
+    # Exponential Moving Average (EMA) :
     #------------------------------------------------------------#
 
     for i in range(0,len(periods)):
-        indicator_bb = BollingerBands(close=features["close"], n=periods[i], ndev=2)
+        features['EMA_{i}'.format(i=periods[i])] = talib.EMA(
+            features['close'],
+            timeperiod=periods[i])
+
+    print("--------- Exponential Moving Average Successful ---------")
+
+    #------------------------------------------------------------#
+    # Bollinger Bands (BBANDS) :
+    #------------------------------------------------------------#
+    for i in range(0,len(periods)):
+        indicator_bb = BollingerBands(close= features["close"], n=periods[i], ndev=2)
         features['bb_bbm_{}'.format(periods[i])] = indicator_bb.bollinger_mavg()
         features['bb_bbh_{}'.format(periods[i])] = indicator_bb.bollinger_hband()
         features['bb_bbl_{}'.format(periods[i])] = indicator_bb.bollinger_lband()
@@ -106,7 +116,7 @@ def preprocessing(file, s=0, create_file=False):
     # ----------- Create File .csv------------
     if create_file == True:
         _csv = pd.concat([features, targets], axis=1)
-        _csv.to_csv(r'dataset/features/EURUSD_2.csv')
+        _csv.to_csv(r'dataset/features/EURUSD_3.csv')
 
     return features, targets
 
