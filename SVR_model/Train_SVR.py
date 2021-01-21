@@ -16,9 +16,9 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = r'dataset\USDJPY_features.csv'
-data = pd.read_csv(file)
-data.set_index('date', inplace=True, drop=True)
+file = r'dataset\features\EURUSD.csv'
+df = pd.read_csv(file)
+df.set_index('date', inplace=True, drop=True)
 
 ################################################
 '''
@@ -26,36 +26,24 @@ data.set_index('date', inplace=True, drop=True)
     - 4 y * 356 d * 24 hr = 34,176
 
 '''
-amounts = 34176
-#amounts = 100
-data = data.tail(amounts+24)
-data = pd.DataFrame(data=data, dtype=np.float64)
-##############################################
-
-features = data.copy(deep=False)
-features.drop(features.tail(24).index, inplace=True)
-features = features.drop(['open_24', 'close_24'], axis=1)
-
-labels = data[['open_24', 'close_24']].copy(deep=False)
-labels = labels.iloc[24:, :]
+features = df[['open', 'high', 'low', 'close','bb_bbm_6',
+       'bb_bbh_6', 'bb_bbl_6', 'bb_bbm_12', 'bb_bbh_12', 'bb_bbl_12',
+       'bb_bbm_18', 'bb_bbh_18', 'bb_bbl_18', 'bb_bbm_24', 'bb_bbh_24',
+       'bb_bbl_24', 'bb_bbm_30', 'bb_bbh_30', 'bb_bbl_30', 'bb_bbm_36',
+       'bb_bbh_36', 'bb_bbl_36']].copy()
+targets = df[['open_24', 'close_24']].copy()
 ################################################
 '''
     - scale output with 1 pip
 '''
-labels = labels*100
+targets = targets*10000
 ################################################
-
-
-labels.reset_index(drop=True, inplace=True)
-labels.index = features.index
-print(labels.head())
-print(features.head())
 
 
 sc_X = StandardScaler()
 sc_y = StandardScaler()
 x = sc_X.fit_transform(features.values)
-y = sc_y.fit_transform(labels.values)
+y = sc_y.fit_transform(targets.values)
 
 input_train, input_test, output_train, output_test = train_test_split(
     x, y, test_size=0.05)
@@ -63,10 +51,10 @@ print("train shape : {:.0f}".format(
     input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/USDJPY_SVR_1.joblib'
+filename = 'model/EURUSD_fix2.joblib'
 
-model = SVR(kernel='rbf', gamma='auto', C=25,
-            epsilon=0.0001, verbose=2, max_iter=500000)
+model = SVR(kernel='rbf', gamma='scale', C=25,
+            epsilon=0.0001, verbose=2)
 
 best_svr = MultiOutputRegressor(model)
 cv = KFold(n_splits=10, shuffle=False)

@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 
 import re
 
-file = r'dataset\data\EURUSD_H1.csv'
+file = r'dataset\data\USDJPY_H1.csv'
 
 data = pd.read_csv(file)
 data.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
@@ -59,16 +59,14 @@ for y in range(2015, 2021):
             df = pd.concat([df, temp_df], ignore_index=True)
 
 # df.drop(['year', 'month', 'day'], axis=1, inplace=True)
-#  df = df.loc[df['year'] == 2019]
 df = df.reset_index(drop=True)
-data_set = df.copy()
-# --------------------------------------------------------------------------------
-A = pd.DataFrame()
-B = pd.DataFrame()
-for y in range(2015, 2021):
-    df = data_set.loc[data_set['year'] == y].copy()
+data = df.copy()
+for y in range(2015,2021):
+    df = data.copy()
+    df = df.reset_index(drop=True)
+    df = df.loc[df['year'] == y]
     # df.to_csv(r'dataset\data\test.csv')
-    
+    # --------------------------------------------------------------------------------
 
     df['dayOfweek'] = pd.to_datetime(df['date'].str.split(
         " ", expand=True)[0], errors='coerce').dt.day_name()
@@ -101,8 +99,8 @@ for y in range(2015, 2021):
     features.drop(features.tail(max_lastM+1).index, inplace=True)
     targets.drop(targets.head(max_firstM+1).index, inplace=True)
 
-    print(features.head(1))
-    print(targets.head(1))
+    print(features)
+    print(targets)
 
     # features = features.loc[ features['date'] != "2015-03-12 21:00"].copy()
     # targets = targets.loc[ targets['date'] != "2015-03-16 21:00"].copy()
@@ -114,8 +112,8 @@ for y in range(2015, 2021):
 
     i = 0
     while i < len(targets):
-        # print("INDEX = ", i)
-        # print("Size : ", len(features), len(targets))
+        print("INDEX = ", i)
+        print("Size : ", len(features), len(targets))
 
         target_date = targets['date'].iloc[i]
         target_time = targets['time'].iloc[i]
@@ -132,10 +130,10 @@ for y in range(2015, 2021):
             print("DayOfWeek : " , feature_dayOfweek , " // " ,  target_dayOfweek)
 
             if target_time > feature_time:
-                # print("---- Targets was remove")
+                print("---- Targets was remove")
                 targets = targets.loc[targets['date'] != target_date].copy()
             elif target_time < feature_time:
-                # print("---- Features was remove")
+                print("---- Features was remove")
                 features = features.loc[features['date'] != feature_date].copy()
             else:
                 print("Method was BREAKING !!")
@@ -144,22 +142,16 @@ for y in range(2015, 2021):
             features = features.reset_index(drop=True)
             targets = targets.reset_index(drop=True)
             print("--------------------------")
-            features.to_csv(r'dataset\data\features{}.csv'.format(y))
-            targets.to_csv(r'dataset\data\targets{}.csv'.format(y))
-            # features.to_csv(r'dataset\data\features.csv')
-            # targets.to_csv(r'dataset\data\targets.csv')
+            
         if (len(targets) > len(features) and (len(targets)-i <= 2 or len(features)-i <= 2)):
-            # print("---- **Targets was remove")
+            print("---- **Targets was remove")
             targets = targets.loc[targets['date'] != target_date].copy()
         elif (len(targets) < len(features) and (len(targets)-i <= 2 or len(features)-i <= 2)):
-            # print("---- **Features was remove")
+            print("---- **Features was remove")
             features = features.loc[features['date'] != feature_date].copy()
         i += 1
-    print("##############################################################")
+    features = features.reset_index(drop=True)
+    targets = targets.reset_index(drop=True)
+    features.to_csv(r'dataset\data\finish\features{}.csv'.format(y))
+    targets.to_csv(r'dataset\data\finish\targets{}.csv'.format(y))
     print(len(features) == len(targets))
-    features.to_csv(r'dataset\data\features{}.csv'.format(y))
-    targets.to_csv(r'dataset\data\targets{}.csv'.format(y))
-    print("##############################################################")
-
-print(A.tail())
-print(B.tail())
