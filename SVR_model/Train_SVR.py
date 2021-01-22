@@ -16,7 +16,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = r'dataset\features\EURUSD_3.csv'
+file = r'dataset\features\EURUSD.csv'
 df = pd.read_csv(file)
 df.set_index('date', inplace=True, drop=True)
 
@@ -27,12 +27,33 @@ df.set_index('date', inplace=True, drop=True)
     - 4 y * 356 d * 24 hr = 34,176
 
 '''
-features = pd.read_csv(r'dataset\features\EURUSD_pca.csv')
-# features = df.copy()
+features = df.copy()
 # features = features.drop(['open_24', 'close_24'], axis=1)
-# features = features[['open','high','low','close','EMA_6','EMA_12','EMA_24','bb_bbm_6', 'bb_bbh_6', 'bb_bbl_6',
-#        'bb_bbm_12', 'bb_bbh_12', 'bb_bbl_12', 'bb_bbm_24', 'bb_bbh_24',
-#        'bb_bbl_24']].copy()
+features = features[['open',
+                     'high',
+                     'low',
+                     'close',
+                     'WPC',
+                     'HA_open',
+                     'HA_high',
+                     'HA_low',
+                     'HA_close',
+                     'EMA_4',
+                     'EMA_8',
+                     'EMA_16',
+                     'EMA_32',
+                     'bb_bbm_4',
+                     'bb_bbh_4',
+                     'bb_bbl_4',
+                     'bb_bbm_8',
+                     'bb_bbh_8',
+                     'bb_bbl_8',
+                     'bb_bbm_16',
+                     'bb_bbh_16',
+                     'bb_bbl_16',
+                     'bb_bbm_32',
+                     'bb_bbh_32',
+                     'bb_bbl_32']].copy()
 print(features.shape)
 targets = df[['open_24', 'close_24']].copy()
 ################################################
@@ -100,6 +121,6 @@ for i in range(len(y_test)):
 print("Crossvalidation score :", np.mean(scores))
 print("Abs_err = ", r2_score(yhat, y_test))
 print("mse = ", mse/100
-)
+      )
 print("sqrt(mse) = ", np.sqrt(mse))
 print("Pips err = ", mean(sum_err), "\n")
