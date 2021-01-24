@@ -75,9 +75,9 @@ print("train shape : {:.0f}".format(
     input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/test_fix2.joblib'
+filename = 'model/BEST_EURUSD.joblib'
 
-model = SVR(kernel='rbf', gamma='auto', C=25,
+model = SVR(kernel='rbf', gamma=10, C=11,
             epsilon=0.0001, verbose=2)
 
 best_svr = MultiOutputRegressor(model)
