@@ -16,7 +16,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = r'dataset\features\EURUSD.csv'
+file = r'dataset\features\USDJPY.csv'
 df = pd.read_csv(file)
 df.set_index('date', inplace=True, drop=True)
 
@@ -60,7 +60,7 @@ targets = df[['open_24', 'close_24']].copy()
 '''
     - scale output with 1 pip
 '''
-targets = targets*10000
+targets = targets*100
 ################################################
 
 
@@ -75,7 +75,7 @@ print("train shape : {:.0f}".format(
     input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/BEST_EURUSD.joblib'
+filename = 'model/BEST_USDJPY.joblib'
 
 model = SVR(kernel='rbf', gamma=10, C=11,
             epsilon=0.0001, verbose=2)
