@@ -123,6 +123,28 @@
           </article>
         </div>
       </div>
+      <div class="tile is-ancestor">
+        <div class="tile is-parent">
+          <article class="tile is-child box">
+            <p class="title is-5 has-text-grey-darker">True Graph</p>
+            <div class="content pl-5 ">
+              <trading-vue
+                :data="chart"
+                :width="0.75 * this.width"
+                :height="0.5 * this.height"
+                :color-back="colors.colorBack"
+                :color-grid="colors.colorGrid"
+                :color-text="colors.colorText"
+                :colorCandleUp="colors.colorCandleUp"
+                :colorCadleDown="colors.colorCadleDown"
+                :titleTxt="this.titleTxt"
+                :showVolume="this.show"
+              >
+              </trading-vue>
+            </div>
+          </article>
+        </div>
+      </div>
     </div>
   </div>
 </template>
