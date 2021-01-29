@@ -1,18 +1,20 @@
 <template>
   <div id="EURUSD" class="has-background-light">
     <div class="container is-fluid">
-      <p class="title is-3 has-text-grey-dark">EUR/USD</p>
+      <p class="title is-3 has-text-grey-dark" style="padding-top: 20px">
+        EUR/USD
+      </p>
       <div class="tile is-ancestor">
         <div class="tile is-12 is-vertical">
           <div class="tile">
             <div class="tile is-parent">
               <article class="tile is-child box">
-                <p class="title is-5  has-text-grey-light">MAE</p>
+                <p class="title is-5 has-text-grey-light">MAE</p>
                 <div>
                   <p class="title is-3">{{ eval.mae }} pips</p>
                   <fa-icon
                     :icon="['fas', 'coins']"
-                    style="color:Tomato"
+                    style="color: Tomato"
                     size="3x"
                   >
                   </fa-icon>
@@ -21,18 +23,16 @@
                   <span>
                     <fa-icon
                       :icon="['fas', 'arrow-up']"
-                      style="color:Tomato"
+                      style="color: Tomato"
                     ></fa-icon>
                   </span>
-                  <span class="title is-5" style="color:Tomato">
-                    2 pips
-                  </span>
+                  <span class="title is-5" style="color: Tomato"> 2 pips </span>
                 </div>
               </article>
             </div>
-            <div class="tile is-parent ">
-              <article class="tile is-child box ">
-                <p class="title is-5  has-text-grey-light">R2 Score</p>
+            <div class="tile is-parent">
+              <article class="tile is-child box">
+                <p class="title is-5 has-text-grey-light">R2 Score</p>
                 <div>
                   <p class="title is-3">{{ eval.r2 }} %</p>
                 </div>
@@ -40,39 +40,39 @@
                   <span>
                     <fa-icon
                       :icon="['fas', 'arrow-up']"
-                      style="color:YellowGreen"
+                      style="color: YellowGreen"
                     ></fa-icon>
                   </span>
-                  <span class="title is-5" style="color:YellowGreen">
+                  <span class="title is-5" style="color: YellowGreen">
                     2.5%
                   </span>
 
-                  <p class="title is-3" style="color:SlateBlue">
+                  <p class="title is-3" style="color: SlateBlue">
                     <var>R<sup>2</sup></var>
                   </p>
                 </div>
               </article>
             </div>
-            <div class="tile is-parent ">
+            <div class="tile is-parent">
               <article class="tile is-child box">
-                <p class="title is-5  has-text-grey-light">Trend Accuracy</p>
+                <p class="title is-5 has-text-grey-light">Trend Accuracy</p>
                 <div>
-                  <p class="title is-3  ">{{ eval.trendAcc }} %</p>
+                  <p class="title is-3">{{ eval.trendAcc }} %</p>
                   <fa-icon
                     :icon="['fas', 'chart-bar']"
-                    style="color:#55D8FB"
+                    style="color: #55d8fb"
                     size="3x"
                   >
                   </fa-icon>
                 </div>
-                <div class="content ">
+                <div class="content">
                   <span>
                     <fa-icon
                       :icon="['fas', 'arrow-up']"
-                      style="color:YellowGreen"
+                      style="color: YellowGreen"
                     ></fa-icon>
                   </span>
-                  <span class="title is-5" style="color:YellowGreen">
+                  <span class="title is-5" style="color: YellowGreen">
                     120%
                   </span>
                 </div>
@@ -84,7 +84,7 @@
       <div class="tile is-ancestor">
         <div class="tile is-parent">
           <article class="tile is-child box">
-            <p class="title is-5  has-text-grey-darker">Moving Average</p>
+            <p class="title is-5 has-text-grey-darker">Moving Average</p>
             <div class="content">
               <LineChart />
             </div>
@@ -92,9 +92,15 @@
         </div>
         <div class="tile is-parent is-4">
           <article class="tile is-child box">
-            <p class="title is-5  has-text-grey-darker">Trend Infomation</p>
-            <div class="content"></div>
-            <p class="title is-5  has-text-grey-darker">Trend Accuracy</p>
+            <p class="title is-5 has-text-grey-darker">Trend Infomation</p>
+            <div class="content" style="padding-left: 20px">
+              <!-- <DoughnutChart /> -->
+              <span>
+                <p class="title is-3 has-text-grey-dark">{{ eval.trend }}</p>
+                <p class="title is-5 has-text-grey-light">Trend Accuracy</p>
+              </span>
+            </div>
+            <p class="title is-5 has-text-grey-darker">Trend Accuracy</p>
             <div class="content">
               <BarChart />
             </div>
@@ -105,7 +111,7 @@
         <div class="tile is-parent">
           <article class="tile is-child box">
             <p class="title is-5 has-text-grey-darker">Predict Graph</p>
-            <div class="content pl-5 ">
+            <div class="content pl-5">
               <trading-vue
                 :data="chart"
                 :width="0.75 * this.width"
@@ -127,7 +133,7 @@
         <div class="tile is-parent">
           <article class="tile is-child box">
             <p class="title is-5 has-text-grey-darker">True Graph</p>
-            <div class="content pl-5 ">
+            <div class="content pl-5">
               <trading-vue
                 :data="chart"
                 :width="0.75 * this.width"
@@ -152,20 +158,55 @@
 <script>
 import BarChart from "../components/EURUSD/BarChart";
 import LineChart from "../components/EURUSD/LineChart";
+// import DoughnutChart from "../components/EURUSD/DoughnutChart"
 
 import TradingVue from "trading-vue-js";
-import Data from "../../data/data.json";
+// import Data from "../../data/data.json";
+import api from "../api"
 export default {
   name: "EURUSD",
   components: {
     TradingVue,
     BarChart,
     LineChart,
+    // DoughnutChart
   },
   methods: {
     onResize() {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
+    },
+    async historical_data() {
+      try {
+        const res = await (await api.get("/EURUSD/historical")).data;
+        console.log(res)
+        const {response} = res
+        const historical = {
+          chart : {
+            type : "Candles",
+            data : []
+          }
+        }
+        console.log(res);
+
+        for(let i=0;i<response.length;i++){
+            // let timeStamp = new Date(response[i].date).getTime()
+            let timeStamp = parseInt(response[i].t)
+            let open = parseFloat(response[i].open)
+            let high = parseFloat(response[i].high)
+            let low = parseFloat(response[i].low)
+            let close = parseFloat(response[i].close)
+            let volume = parseInt(response[i].volume)
+            historical.chart.data.push([
+              timeStamp,open,high,low,close,volume
+            ])
+        }
+        console.log(historical)
+        this.chart = historical
+
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   mounted() {
@@ -177,7 +218,7 @@ export default {
   data() {
     return {
       titleTxt: "EUR/USD",
-      chart: Data,
+      chart: {},
       width: window.innerWidth,
       height: window.innerHeight,
       show: false,
@@ -192,6 +233,7 @@ export default {
         mae: 54,
         r2: 69,
         trendAcc: 200,
+        trend: "Uptrend",
       },
     };
   },

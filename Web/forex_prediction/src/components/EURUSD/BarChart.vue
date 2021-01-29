@@ -1,6 +1,7 @@
 <script>
 import { Bar } from "vue-chartjs";
 
+
 export default {
   extends: Bar,
   mounted() {
@@ -16,13 +17,19 @@ export default {
         ],
         datasets: [
           {
-            label: "Data One",
+            label: "2020",
             backgroundColor: "#55D8FB",
-            data: [40, 20, 12, 39, 10, 41]
+            data: [40, 20, 12, 39, 15,41],
+            barThickness : 8,
+            barPercentage: 0.5
           }
         ]
       },
-      { responsive: true, maintainAspectRatio: false }
+      { 
+        responsive: true, 
+        maintainAspectRatio: false ,
+        
+      }
     );
   }
 };
