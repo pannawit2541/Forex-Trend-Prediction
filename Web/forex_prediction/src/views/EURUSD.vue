@@ -113,7 +113,7 @@
             <p class="title is-5 has-text-grey-darker">Predict Graph</p>
             <div class="content pl-5">
               <trading-vue
-                :data="chart"
+                :data="chart_pred"
                 :width="0.75 * this.width"
                 :height="0.5 * this.height"
                 :color-back="colors.colorBack"
@@ -158,18 +158,17 @@
 <script>
 import BarChart from "../components/EURUSD/BarChart";
 import LineChart from "../components/EURUSD/LineChart";
-// import DoughnutChart from "../components/EURUSD/DoughnutChart"
 
 import TradingVue from "trading-vue-js";
 // import Data from "../../data/data.json";
-import api from "../api"
+import { api } from "../api";
+
 export default {
   name: "EURUSD",
   components: {
     TradingVue,
     BarChart,
     LineChart,
-    // DoughnutChart
   },
   methods: {
     onResize() {
@@ -179,31 +178,60 @@ export default {
     async historical_data() {
       try {
         const res = await (await api.get("/EURUSD/historical")).data;
-        console.log(res)
-        const {response} = res
+        const { response } = res;
         const historical = {
-          chart : {
-            type : "Candles",
-            data : []
-          }
-        }
-        console.log(res);
+          chart: {
+            type: "Candles",
+            data: [],
+          },
+        };
 
-        for(let i=0;i<response.length;i++){
-            // let timeStamp = new Date(response[i].date).getTime()
-            let timeStamp = parseInt(response[i].t)
-            let open = parseFloat(response[i].open)
-            let high = parseFloat(response[i].high)
-            let low = parseFloat(response[i].low)
-            let close = parseFloat(response[i].close)
-            let volume = parseInt(response[i].volume)
-            historical.chart.data.push([
-              timeStamp,open,high,low,close,volume
-            ])
+        for (let i in response) {
+          // // let timeStamp = new Date(response[i].date).getTime()
+          let timeStamp = parseInt(response[i].t);
+          let open = parseFloat(response[i].o);
+          let high = parseFloat(response[i].h);
+          let low = parseFloat(response[i].l);
+          let close = parseFloat(response[i].c);
+          let volume = parseInt(response[i].v);
+          historical.chart.data.push([
+            timeStamp,
+            open,
+            high,
+            low,
+            close,
+            volume,
+          ]);
         }
-        console.log(historical)
-        this.chart = historical
 
+        this.chart = historical;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async predict_data() {
+      try {
+        const res = (await api.get("/EURUSD/evaluate")).data;
+        const historical_predict = res.Predict_ohlc;
+        // console.log(historical_predict)
+        const time_historical = res.Time_stamp;
+        const historical = {
+          chart: {
+            type: "Candles",
+            data: [],
+          },
+        };
+
+        for (let i in historical_predict) {
+          let timeStamp = time_historical[i];
+          let open = historical_predict[i][0];
+          let high = historical_predict[i][0];
+          let close = historical_predict[i][1];
+          let low = historical_predict[i][1];
+          historical.chart.data.push([timeStamp, open, high, low, close]);
+        }
+
+        this.chart_pred = historical;
       } catch (error) {
         console.log(error);
       }
@@ -211,6 +239,8 @@ export default {
   },
   mounted() {
     window.addEventListener("resize", this.onResize);
+    // this.historical_data();
+    this.predict_data();
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.onResize);
@@ -219,6 +249,7 @@ export default {
     return {
       titleTxt: "EUR/USD",
       chart: {},
+      chart_pred: {},
       width: window.innerWidth,
       height: window.innerHeight,
       show: false,

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height : 100%">
     <div class="sideStyle">
       <div class="title is-4 has-text-white-ter">Forex Prediction</div>
     </div>

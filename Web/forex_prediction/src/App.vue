@@ -2,7 +2,7 @@
   <div id="app">
    
     <div class="columns is-gapless is-mobile">
-      <div class="column is-2"><side-bar-component /></div>
+      <div class="column is-2" ><side-bar-component /></div>
       <div class="column">
         <nav-bar-component />
         <router-view />
