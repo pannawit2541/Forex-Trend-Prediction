@@ -63,15 +63,15 @@ evaluate = {
 #         "volume": data['volume']
 #     }
 
-# @app.route('/<string:c_pair>/historical', methods=['GET'])
-# def data_historical(c_pair):
-#     #response = requests.get("https://fcsapi.com/api-v3/forex/history?id=1&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3")
-#     response = API_historical.get("{}".format(c_pair))
-#     if request.method == 'GET':
-#         result = response.json()
-#         return make_response(jsonify(result), 200)
-#     else:
-#         return make_response("", 404)
+@app.route('/<string:c_pair>/historical', methods=['GET'])
+def data_historical(c_pair):
+    #response = requests.get("https://fcsapi.com/api-v3/forex/history?id=1&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3")
+    response = API_historical.get("{}".format(c_pair))
+    if request.method == 'GET':
+        result = response.json()
+        return make_response(jsonify(result), 200)
+    else:
+        return make_response("", 404)
 
 @app.route('/<string:c_pair>/evaluate', methods=['GET'])
 def data_evaluate(c_pair):

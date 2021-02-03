@@ -557,5 +557,10 @@ def for_predict(file):
 
     return df
 
+def smooth_candlestick(data):
+    new_ohlc = data.copy()
+    for i in range(1,len(data)):
+        new_ohlc[i][0] = data[i-1][1]
 
+    return new_ohlc 
 

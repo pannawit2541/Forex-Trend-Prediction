@@ -9,6 +9,7 @@ from preprocessing import for_evaluate
 from preprocessing import slope_24
 from preprocessing import to_dataFrame
 from preprocessing import for_predict
+from preprocessing import smooth_candlestick
 
 import requests
 import json
@@ -47,22 +48,23 @@ def evaluate_historical(data,c_pair):
     yhat = sc_y.inverse_transform(yhat)
     # y_pre = yhat[-24:,:].copy()/pip
     # yhat = yhat[:-24,:].copy()/pip
-    yhat = yhat/pip
+    yhat = yhat
     
     # ----------------------------------------
 
     # ----------------------------------------
     # ! Evaluate
-    # date = data['date'].iloc[:-24].values.tolist()
-    # date_24 = data['date'].iloc[-24:].values.tolist()
-    # time_stamp = data['t'].iloc[:-24].values.tolist()
-    # time_stamp_24 = data['t'].iloc[-24:].values.tolist()
-    date = data['date'].values.tolist()
+
+    # date = data['date'].values.tolist()
+    date = data['date'].iloc[-240:].str.split(n=1,expand=True).values[:,0].tolist()
+
     time_stamp = data['t'].values.tolist()
-    MAE = mean_absolute_error(targets.values, yhat[:-24,:])
-    SMA_predict = np.around(moving_average(yhat[:,1],24),5).tolist()
-    SMA_true = np.around(moving_average(targets['close'].values,24),5).tolist()
-    values = np.around((yhat),decimals=5).tolist() 
+    MAE = int(mean_absolute_error(targets.values, yhat[:-24,:]))
+    SMA_predict = (np.around(moving_average(yhat[:,1],24),4)/pip).tolist()
+    SMA_true = (np.around(moving_average(targets['close'].values,24),4)/pip).tolist()
+
+    yhat_smooth = smooth_candlestick(yhat)
+    values = np.around((yhat_smooth/pip),decimals=5).tolist() 
     # pre_values = np.around((y_pre),decimals=5).tolist() 
     score = {
         'Date' : date,
@@ -70,10 +72,10 @@ def evaluate_historical(data,c_pair):
         'Time_stamp' : time_stamp,
         # 'Time_stamp_24hr' : time_stamp_24,
         'MAE' : MAE,
-        'R2_SCORE' : r2_score(targets.values, yhat[:-24,:])*100,
+        'R2_SCORE' : int(r2_score(targets.values, yhat[:-24,:])*100),
         'SMA_predict' : SMA_predict,
         'SMA_true' : SMA_true,
-        'Slope_acc' : slope_24(targets['close'],yhat[:-24,1]),
+        'Slope_acc' : int(slope_24(targets['close'],yhat[:-24,1])),
         'Predict_ohlc' : values,
         # 'Predict_24hr' : pre_values
     }

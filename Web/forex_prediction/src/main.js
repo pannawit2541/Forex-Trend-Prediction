@@ -10,7 +10,10 @@ Vue.config.productionTip = false
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 
-Vue.use(Buefy)
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts,Buefy)
+
+Vue.component('apexchart', VueApexCharts)
 
 new Vue({
   router,

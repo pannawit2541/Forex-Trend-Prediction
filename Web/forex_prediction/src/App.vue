@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-   
     <div class="columns is-gapless is-mobile">
       <div class="column is-2" ><side-bar-component /></div>
       <div class="column">
@@ -24,4 +23,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
+#app{
+  font-family: 'Source Sans Pro';
+}
+</style>
