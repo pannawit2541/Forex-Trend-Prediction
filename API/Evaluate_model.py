@@ -19,6 +19,16 @@ from collections import namedtuple
 def moving_average(x, w):
     return np.convolve(x, np.ones(w), 'valid') / w
 
+def slope(predict):
+    predict_pd = pd.DataFrame(predict)
+
+    def calc_slope(x):
+        slope = np.polyfit(range(len(x)), x, 1)[0]
+        return slope
+    pre_slope = predict_pd.rolling(48).apply(calc_slope,raw=False).values
+
+    return pre_slope
+
 def evaluate_historical(data,c_pair):
     pip = 0
     if c_pair == "EURUSD" or c_pair == "GBPUSD":
@@ -63,6 +73,9 @@ def evaluate_historical(data,c_pair):
     SMA_predict = (np.around(moving_average(yhat[:,1],24),4)/pip).tolist()
     SMA_true = (np.around(moving_average(targets['close'].values,24),4)/pip).tolist()
 
+    slope_values = slope(yhat[:,1])[-24:].tolist()
+    slope_values = [item for sublist in slope_values for item in sublist]
+
     yhat_smooth = smooth_candlestick(yhat)
     values = np.around((yhat_smooth/pip),decimals=5).tolist() 
     # pre_values = np.around((y_pre),decimals=5).tolist() 
@@ -77,6 +90,7 @@ def evaluate_historical(data,c_pair):
         'SMA_true' : SMA_true,
         'Slope_acc' : int(slope_24(targets['close'],yhat[:-24,1])),
         'Predict_ohlc' : values,
+        'Slope_values' : slope_values
         # 'Predict_24hr' : pre_values
     }
     # ----------------------------------------

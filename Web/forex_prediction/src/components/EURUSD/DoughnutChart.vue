@@ -1,11 +1,12 @@
 <template>
   <div id="donut">
-    <div id="chart">
+    <div id="chart" style="width: 200px; height: 50px; min-height: 100px;">
       <apexchart
         type="radialBar"
-        width="180"
+        width="200"
         :options="this.chartOptions"
         :series="series"
+        
       ></apexchart>
     </div>
   </div>
@@ -15,15 +16,15 @@
 export default {
   data() {
     return {
-      series: [70],
+      series: this.series_percent,
       chartOptions: {
         chart: {
           type: "radialBar",
         },
         plotOptions: {
           radialBar: {
-            offsetX: -30,
-            offsetY: -10,
+            offsetX: -26,
+            offsetY: -20,
             dataLabels: {
               name: {
                 show: false,
@@ -42,13 +43,17 @@ export default {
           },
         },
         fill: {
-          colors: "#FFA7C4",
+          colors: this.fill_color,
         },
         stroke: {
           lineCap: "round",
         },
       },
     };
+  },
+  props: {
+    series_percent: Array,
+    fill_color: String,
   },
 };
 </script>

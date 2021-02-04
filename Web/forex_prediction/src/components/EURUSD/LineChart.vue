@@ -15,16 +15,20 @@ export default {
     async SMA_predict() {
       try {
         const res = (await api.get("/EURUSD/evaluate")).data;
-        const len_date = res.Date.length;
-        const len_pre = res.SMA_predict.length;
-        const len_true = res.SMA_true.length;
-        // this.sma_predict = res.SMA_predict;
-        // this.sma_true = res.SMA_true;
-        // this.date = res.Date;
-        for (let i = 6; i > 0; i--) {
+        
+        const len_date = res.Time_stamp.length-1;
+        // console.log(res.Date[res.Date.length-1] , res.Date.length)
+        // console.log(new Date( res.Time_stamp[res.Time_stamp.length-1] )  , res.Time_stamp.length)
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const len_pre = res.SMA_predict.length-1;
+        const len_true = res.SMA_true.length-1;
+        for (let i = 5; i >= 0; i--) {
           this.sma_predict.push(res.SMA_predict[len_pre - 24 * i]);
-          this.date.push(res.Date[len_date - 24 * i]);
-          if (i == 1) {
+          let date_str = new Date((res.Time_stamp[len_date - 24*i] + 60*60*24 )* 1000)
+          let month = months[date_str.getMonth()]
+          this.date.push(date_str.getDate()+" "+month+" "+(date_str.getFullYear()-2000))
+
+          if (i == 0) {
             this.sma_true.push(null);
           } else {
             this.sma_true.push(res.SMA_true[len_true - 24 * i]);

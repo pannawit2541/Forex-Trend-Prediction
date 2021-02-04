@@ -4,7 +4,6 @@
       <div class="tile is-parent">
         <article class="tile is-child box">
           <p class="subtitle is-5 has-text-grey-darker">Predict Graph</p>
-          <hr>
           <div class="content pl-5">
             <trading-vue
               :data="this.chart_pred"
@@ -28,7 +27,6 @@
       <div class="tile is-parent">
         <article class="tile is-child box">
           <p class="subtitle is-5 has-text-grey-darker">Realtime Graph</p>
-          <hr>
           <div class="content pl-5">
             <trading-vue
               :data="this.chart_true"
@@ -83,7 +81,7 @@ export default {
     },
     async predict_data() {
       try {
-        const res = (await api.get("/EURUSD/evaluate")).data;
+        const res = await (await api.get("/EURUSD/evaluate")).data;
         const historical_predict = res.Predict_ohlc;
         const time_historical = res.Time_stamp;
         const historical = {
@@ -93,7 +91,8 @@ export default {
           },
         };
         for (let i in historical_predict) {
-          let timeStamp = ((time_historical[i] + 60*60*24)* 1000);
+          let timeStamp = ((time_historical[i] + 60*60*31)* 1000);
+          // console.log(timeStamp)
           let open = historical_predict[i][0];
           let high = historical_predict[i][0];
           let close = historical_predict[i][1];
@@ -117,7 +116,7 @@ export default {
           },
         };
         for (let i in response) {
-          let timeStamp = parseInt(response[i].t) * 1000;
+          let timeStamp = (response[i].t + 60*60*7)* 1000;
           let open = parseFloat(response[i].o);
           let high = parseFloat(response[i].h);
           let low = parseFloat(response[i].l);
