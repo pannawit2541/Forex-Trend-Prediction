@@ -65,8 +65,8 @@ def evaluate_historical(data,c_pair):
     # ----------------------------------------
     # ! Evaluate
 
-    # date = data['date'].values.tolist()
-    date = data['date'].iloc[-240:].str.split(n=1,expand=True).values[:,0].tolist()
+    date = data['date'].values.tolist()
+    # date = data['date'].iloc[-240:].str.split(n=1,expand=True).values[:,0].tolist()
 
     time_stamp = data['t'].values.tolist()
     MAE = int(mean_absolute_error(targets.values, yhat[:-24,:]))
@@ -103,7 +103,7 @@ def evaluate_historical(data,c_pair):
 
 # data = pd.read_csv(r'save_data\test.csv')
 # result = evaluate_historical(data,'EURUSD')
-# print(result)
+# print((result["Date"][-1]),(result["Time_stamp"][-1]))
 # print(type(result['Date']))
 # from collections import namedtuple
 # d_named = namedtuple("Evaluate", result.keys())(*result.values())

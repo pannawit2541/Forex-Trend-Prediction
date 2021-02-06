@@ -83,7 +83,7 @@
                 <span>
                   <fa-icon
                     :icon="['fas', 'chart-bar']"
-                    style="color: #55D8FE"
+                    style="color: #FFA7C4"
                     size="3x"
                   >
                   </fa-icon>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-// import { api } from "../../api";
+
 
 
 export default {

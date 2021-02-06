@@ -63,7 +63,6 @@
 <script>
 import LineChart from "./LineChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
-// import { api } from "../../api";
 
 export default {
   props: {

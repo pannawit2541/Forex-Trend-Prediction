@@ -83,7 +83,7 @@
                 <span>
                   <fa-icon
                     :icon="['fas', 'chart-bar']"
-                    style="color: #55D8FE"
+                    style="color: #A3A0FB"
                     size="3x"
                   >
                   </fa-icon>

@@ -51,6 +51,7 @@
 
 <script>
 import TradingVue from "trading-vue-js";
+
 export default {
   name: "CandleStickChart",
   props:{
@@ -59,7 +60,8 @@ export default {
   },
   data() {
     return {
-      titleTxt: "EUR/USD",
+      titleTxt: "GBP/USD",
+
       width: window.innerWidth,
       height: window.innerHeight,
       show: false,
@@ -80,6 +82,7 @@ export default {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
     },
+    
   },
   mounted() {
     window.addEventListener("resize", this.onResize);
