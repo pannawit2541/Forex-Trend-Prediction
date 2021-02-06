@@ -8,7 +8,6 @@ from sklearn.metrics import mean_absolute_error,r2_score
 from preprocessing import for_evaluate
 from preprocessing import slope_24
 from preprocessing import to_dataFrame
-from preprocessing import for_predict
 from preprocessing import smooth_candlestick
 
 import requests
@@ -58,8 +57,7 @@ def evaluate_historical(data,c_pair):
     yhat = sc_y.inverse_transform(yhat)
     # y_pre = yhat[-24:,:].copy()/pip
     # yhat = yhat[:-24,:].copy()/pip
-    yhat = yhat
-    
+    # yhat = yhat
     # ----------------------------------------
 
     # ----------------------------------------
@@ -101,8 +99,8 @@ def evaluate_historical(data,c_pair):
     return score
 
 
-# data = pd.read_csv(r'save_data\test.csv')
-# result = evaluate_historical(data,'EURUSD')
+data = pd.read_csv(r'save_data\test.csv')
+result = evaluate_historical(data,'EURUSD')
 # print((result["Date"][-1]),(result["Time_stamp"][-1]))
 # print(type(result['Date']))
 # from collections import namedtuple

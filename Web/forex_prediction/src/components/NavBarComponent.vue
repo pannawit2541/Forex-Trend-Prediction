@@ -12,4 +12,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.navbar .navbar-end{
+  height: 65px;
+  /* width: 225px; */
+}
+
+</style>
