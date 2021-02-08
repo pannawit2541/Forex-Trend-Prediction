@@ -99,8 +99,8 @@ def evaluate_historical(data,c_pair):
     return score
 
 
-data = pd.read_csv(r'save_data\test.csv')
-result = evaluate_historical(data,'EURUSD')
+# data = pd.read_csv(r'save_data\test.csv')
+# result = evaluate_historical(data,'EURUSD')
 # print((result["Date"][-1]),(result["Time_stamp"][-1]))
 # print(type(result['Date']))
 # from collections import namedtuple

@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import CandleStickChart from "../components/USDJPY/CandleStickChart.vue";
-import MiddleEvaluate from "../components/USDJPY/MiddleEvaluate.vue";
-import TopEvaluate from "../components/USDJPY/TopEvaluate";
+import CandleStickChart from "../components/CandleStickChart.vue";
+import MiddleEvaluate from "../components/MiddleEvaluate.vue";
+import TopEvaluate from "../components/TopEvaluate";
 import { api } from "../api";
 
 export default {

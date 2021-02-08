@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import CandleStickChart from "../components/EURUSD/CandleStickChart.vue";
-import MiddleEvaluate from "../components/EURUSD/MiddleEvaluate.vue";
-import TopEvaluate from "../components/EURUSD/TopEvaluate";
+import CandleStickChart from "../components/CandleStickChart.vue";
+import MiddleEvaluate from "../components/MiddleEvaluate.vue";
+import TopEvaluate from "../components/TopEvaluate";
 import { api } from "../api";
 
 export default {
@@ -228,7 +228,7 @@ export default {
           },
         };
         for (let i in response) {
-          let timeStamp = (response[i].t)* 1000;
+          let timeStamp = response[i].t * 1000;
           let open = parseFloat(response[i].o);
           let high = parseFloat(response[i].h);
           let low = parseFloat(response[i].l);
@@ -265,7 +265,7 @@ export default {
     await this.Trend_predict();
     await this.SMA_chart();
     await this.OHLC_predict();
-    await this.OHLC_true()
+    await this.OHLC_true();
     this.Trend_suggest();
     this.forceRerender();
   },
