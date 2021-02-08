@@ -83,7 +83,7 @@
                 <span>
                   <fa-icon
                     :icon="['fas', 'chart-bar']"
-                    style="color: #FFA7C4"
+                    :style="{'color': icon_color}"
                     size="3x"
                   >
                   </fa-icon>
@@ -106,16 +106,8 @@ export default {
   props:{
     MAE : Number,
     R2_score : Number,
-    Trend_acc : Number
-  },
-  data() {
-    return {
-    };
-  },
-  methods: {
-
-  },
-  async mounted() {
+    Trend_acc : Number,
+    icon_color : String
   },
 };
 </script>

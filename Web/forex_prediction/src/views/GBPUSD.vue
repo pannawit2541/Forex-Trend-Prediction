@@ -8,14 +8,10 @@
         :MAE="header.MAE"
         :R2_score="header.R2_score"
         :Trend_acc="header.Trend_acc"
+        :icon_color="header.icon_color"
         v-if="renderComponent"
       ></top-evaluate>
-      <middle-evaluate
-        :trend_info="middle.trend_info"
-        :suggest_info="middle.suggest_info"
-        :sma_chart="middle.sma_chart"
-        v-if="renderComponent"
-      ></middle-evaluate>
+      <gbpusd-suggest></gbpusd-suggest>
       <candle-stick-chart
         :chart_pred="footer.OHLC_predict"
         :chart_true="footer.OHLC_true"
@@ -27,18 +23,14 @@
 
 <script>
 import CandleStickChart from "../components/CandleStickChart.vue";
-import MiddleEvaluate from "../components/MiddleEvaluate.vue";
+// import MiddleEvaluate from "../components/MiddleEvaluate.vue";
 import TopEvaluate from "../components/TopEvaluate";
 import { api } from "../api";
+import GbpusdSuggest from '../components/Suugestion/GbpusdSuggest.vue';
 
 export default {
   name: "GBPUSD",
-  components: {
-    TopEvaluate,
-    MiddleEvaluate,
-    CandleStickChart,
-  },
-  data() {
+   data() {
     return {
       response: null,
       renderComponent: true,
@@ -46,6 +38,7 @@ export default {
         MAE: null,
         R2_score: null,
         Trend_acc: null,
+        icon_color: "#A3A0FB"
       },
       middle: {
         trend_info: {
@@ -72,6 +65,13 @@ export default {
       },
     };
   },
+  components: {
+    TopEvaluate,
+    // MiddleEvaluate,
+    CandleStickChart,
+    GbpusdSuggest,
+  },
+ 
   methods: {
     async REST_api() {
       this.response = (await api.get("/GBPUSD/evaluate")).data;
@@ -261,12 +261,14 @@ export default {
   },
   async mounted() {
     await this.REST_api();
+    
     await this.Evaluate_score();
-    await this.Trend_predict();
-    await this.SMA_chart();
+    // this.Trend_suggest();
+    // await this.Trend_predict();
+    // await this.SMA_chart();
     await this.OHLC_predict();
     await this.OHLC_true()
-    this.Trend_suggest();
+    
     this.forceRerender();
   },
 };

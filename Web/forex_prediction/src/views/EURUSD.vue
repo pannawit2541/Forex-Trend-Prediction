@@ -8,14 +8,10 @@
         :MAE="header.MAE"
         :R2_score="header.R2_score"
         :Trend_acc="header.Trend_acc"
+        :icon_color="header.icon_color"
         v-if="renderComponent"
       ></top-evaluate>
-      <middle-evaluate
-        :trend_info="middle.trend_info"
-        :suggest_info="middle.suggest_info"
-        :sma_chart="middle.sma_chart"
-        v-if="renderComponent"
-      ></middle-evaluate>
+      <eurusd-suggest></eurusd-suggest>
       <candle-stick-chart
         :chart_pred="footer.OHLC_predict"
         :chart_true="footer.OHLC_true"
@@ -27,7 +23,8 @@
 
 <script>
 import CandleStickChart from "../components/CandleStickChart.vue";
-import MiddleEvaluate from "../components/MiddleEvaluate.vue";
+
+import EurusdSuggest from "../components/Suugestion/EurusdSuggest.vue";
 import TopEvaluate from "../components/TopEvaluate";
 import { api } from "../api";
 
@@ -35,7 +32,7 @@ export default {
   name: "EURUSD",
   components: {
     TopEvaluate,
-    MiddleEvaluate,
+    EurusdSuggest,
     CandleStickChart,
   },
   data() {
@@ -46,6 +43,7 @@ export default {
         MAE: null,
         R2_score: null,
         Trend_acc: null,
+        icon_color: "#55D8FE"
       },
       middle: {
         trend_info: {
@@ -192,6 +190,8 @@ export default {
         console.log(error);
       }
     },
+
+    // --------------------- Footer ---------------------
     async OHLC_predict() {
       try {
         const historical_predict = this.response.Predict_ohlc;
@@ -249,6 +249,8 @@ export default {
         console.log(error);
       }
     },
+
+    // --------------------- Render ---------------------
     forceRerender() {
       // Remove my-component from the DOM
       this.renderComponent = false;
@@ -262,11 +264,12 @@ export default {
   async mounted() {
     await this.REST_api();
     await this.Evaluate_score();
-    await this.Trend_predict();
-    await this.SMA_chart();
+    // await this.Trend_predict();
+    // await this.SMA_chart();
+    // this.Trend_suggest();
     await this.OHLC_predict();
     await this.OHLC_true();
-    this.Trend_suggest();
+    
     this.forceRerender();
   },
 };
