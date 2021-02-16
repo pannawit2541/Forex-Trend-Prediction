@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error,r2_score
 
 from preprocessing import for_evaluate
-from preprocessing import slope_24
+from preprocessing import slope_acc
 from preprocessing import to_dataFrame
 from preprocessing import smooth_candlestick
 
@@ -68,15 +68,16 @@ def evaluate_historical(data,c_pair):
 
     time_stamp = data['t'].values.tolist()
     MAE = int(mean_absolute_error(targets.values, yhat[:-24,:]))
-    SMA_predict = (np.around(moving_average(yhat[:,1],24),4)/pip).tolist()
-    SMA_true = (np.around(moving_average(targets['close'].values,24),4)/pip).tolist()
-
+    SMA_predict = (np.around(moving_average(yhat[:,1],24),4)/pip)
+    SMA_true = (np.around(moving_average(targets['close'].values,24),4)/pip)
+    trend_acc = slope_acc(SMA_predict[:-24],SMA_true,48)
     slope_values = slope(yhat[:,1])[-24:].tolist()
     slope_values = [item for sublist in slope_values for item in sublist]
 
     yhat_smooth = smooth_candlestick(yhat)
     values = np.around((yhat_smooth/pip),decimals=5).tolist() 
     # pre_values = np.around((y_pre),decimals=5).tolist() 
+
     score = {
         'Date' : date,
         # 'Date_24hr' : date_24,
@@ -84,9 +85,9 @@ def evaluate_historical(data,c_pair):
         # 'Time_stamp_24hr' : time_stamp_24,
         'MAE' : MAE,
         'R2_SCORE' : int(r2_score(targets.values, yhat[:-24,:])*100),
-        'SMA_predict' : SMA_predict,
-        'SMA_true' : SMA_true,
-        'Slope_acc' : int(slope_24(targets['close'],yhat[:-24,1])),
+        'SMA_predict' : SMA_predict.tolist(),
+        'SMA_true' : SMA_true.tolist(),
+        'Slope_acc' : int(trend_acc),
         'Predict_ohlc' : values,
         'Slope_values' : slope_values
         # 'Predict_24hr' : pre_values
@@ -99,9 +100,9 @@ def evaluate_historical(data,c_pair):
     return score
 
 
-# data = pd.read_csv(r'save_data\test.csv')
-# result = evaluate_historical(data,'EURUSD')
-# print((result["Date"][-1]),(result["Time_stamp"][-1]))
+data = pd.read_csv(r'save_data\test_EUR.csv')
+result = evaluate_historical(data,'EURUSD')
+print((result["Slope_acc"]))
 # print(type(result['Date']))
 # from collections import namedtuple
 # d_named = namedtuple("Evaluate", result.keys())(*result.values())

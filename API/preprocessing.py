@@ -271,23 +271,26 @@ def for_evaluate(file, scale=0, create_file=False):
 
 from sklearn.metrics import accuracy_score
 
-def slope_24(targets,predict):
+def slope_acc(targets,predict,period):
     predict_pd = pd.DataFrame(predict)
+    true_pd = pd.DataFrame(targets)
 
     def calc_slope(x):
+        # print(np.polyfit(range(len(x)), x, 1))
         slope = np.polyfit(range(len(x)), x, 1)[0]
         return slope
-    pre_slope = targets.rolling(24).apply(calc_slope,raw=False).values
-    true_slope = predict_pd.rolling(24).apply(calc_slope,raw=False).values
+    pre_slope = true_pd.rolling(period).apply(calc_slope,raw=False).values
+    true_slope = predict_pd.rolling(period).apply(calc_slope,raw=False).values
     pred_trend = []
     true_trend = []
-    for i in range(24,len(pre_slope)):
+    # print(pre_slope)
+    for i in range(len(pre_slope)):
         if pre_slope[i] >= 0:
             pred_trend.append(1)
         else:
             pred_trend.append(0)
-
-    for i in range(24,len(true_slope)):
+    # print(pred_trend)
+    for i in range(len(true_slope)):
         if true_slope[i] >= 0:
             true_trend.append(1)
         else :
