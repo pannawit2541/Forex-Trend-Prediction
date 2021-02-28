@@ -100,9 +100,9 @@ def evaluate_historical(data,c_pair):
     return score
 
 
-data = pd.read_csv(r'save_data\test_EUR.csv')
-result = evaluate_historical(data,'EURUSD')
-print((result["Slope_acc"]))
+# data = pd.read_csv(r'save_data\test_EUR.csv')
+# result = evaluate_historical(data,'EURUSD')
+# print((result["Slope_acc"]))
 # print(type(result['Date']))
 # from collections import namedtuple
 # d_named = namedtuple("Evaluate", result.keys())(*result.values())
