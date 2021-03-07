@@ -15,6 +15,7 @@
       <candle-stick-chart
         :chart_pred="footer.OHLC_predict"
         :chart_true="footer.OHLC_true"
+        :titleTxt="footer.titleTxt"
         v-if="renderComponent"
       ></candle-stick-chart>
     </div>
@@ -65,6 +66,7 @@ export default {
         },
       },
       footer: {
+        titleTxt: "EURUSD",
         OHLC_predict: null,
         OHLC_true: null,
       },

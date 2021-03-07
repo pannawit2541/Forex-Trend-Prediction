@@ -56,12 +56,11 @@ export default {
   name: "CandleStickChart",
   props:{
     chart_pred : Object,
-    chart_true : Object
+    chart_true : Object,
+    titleTxt: String,
   },
   data() {
     return {
-      titleTxt: "USD/JPY",
-
       width: window.innerWidth,
       height: window.innerHeight,
       show: false,
