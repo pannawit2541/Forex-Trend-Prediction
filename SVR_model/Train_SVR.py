@@ -16,10 +16,12 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-file = r'dataset\features\USDJPY.csv'
+file = r'dataset\2020update\EURUSD_features.csv'
 df = pd.read_csv(file)
 df.set_index('date', inplace=True, drop=True)
-
+# df = df.drop(df.columns[[0]], axis=1)
+df = df.iloc[50038:87428,:].copy()
+print(df.shape)
 
 ################################################
 '''
@@ -28,99 +30,106 @@ df.set_index('date', inplace=True, drop=True)
 
 '''
 features = df.copy()
-# features = features.drop(['open_24', 'close_24'], axis=1)
-features = features[['open',
-                     'high',
-                     'low',
-                     'close',
-                     'WPC',
-                     'HA_open',
-                     'HA_high',
-                     'HA_low',
-                     'HA_close',
-                     'EMA_4',
-                     'EMA_8',
-                     'EMA_16',
-                     'EMA_32',
-                     'bb_bbm_4',
-                     'bb_bbh_4',
-                     'bb_bbl_4',
-                     'bb_bbm_8',
-                     'bb_bbh_8',
-                     'bb_bbl_8',
-                     'bb_bbm_16',
-                     'bb_bbh_16',
-                     'bb_bbl_16',
-                     'bb_bbm_32',
-                     'bb_bbh_32',
-                     'bb_bbl_32']].copy()
-print(features.shape)
+
+features = features.drop(['open_24', 'close_24'], axis=1)
 targets = df[['open_24', 'close_24']].copy()
 ################################################
 '''
     - scale output with 1 pip
 '''
-targets = targets*100
+targets = targets*10000
 ################################################
-
+print(features.head(2))
+print(features.tail(2))
+# print(targets.tail(2))
 
 sc_X = StandardScaler()
 sc_y = StandardScaler()
 x = sc_X.fit_transform(features.values)
 y = sc_y.fit_transform(targets.values)
+# input_train = x
+# output_train = y 
 
 input_train, input_test, output_train, output_test = train_test_split(
     x, y, test_size=0.05)
-print("train shape : {:.0f}".format(
-    input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
+print("train shape : {:.0f}".format(input_train.shape[0]/24), "days || test shape : {:.0f}".format(input_test.shape[0]/24), "days")
 
 
-filename = 'model/BEST_USDJPY.joblib'
+filename = 'model/2020_EURUSD.joblib'
+result = []
+C = np.arange(1, 50, 10)
+gamma = ['auto','scale',0.001,0.01,0.1,1,10]
+epsilon = [0.0001]
 
-model = SVR(kernel='rbf', gamma=10, C=11,
-            epsilon=0.0001, verbose=2)
+for c in C:
+    for g in gamma:
+        for e in epsilon:
+            model = SVR(kernel='rbf', gamma=g, C=c,
+                        epsilon=e, verbose=1,max_iter=100000)
+            best_svr = MultiOutputRegressor(model)
+            best_svr.fit(input_train, output_train)
 
-best_svr = MultiOutputRegressor(model)
-cv = KFold(n_splits=10, shuffle=False)
-scores = []
-i = 1
-for train_index, test_index in cv.split(input_train):
-    print("K-folds at : ", i)
+            yhat = best_svr.predict(input_test)
+            yhat = sc_y.inverse_transform(yhat)
+            y_test = sc_y.inverse_transform(output_test)
+            mse = mean_squared_error(y_test, yhat)
 
-    X_train, X_test, y_train, y_test = input_train[train_index], input_train[
-        test_index], output_train[train_index], output_train[test_index]
-    best_svr.fit(X_train, y_train)
+            print("-------------------------------------------------")
+            print("R2_score = ", r2_score(yhat, y_test))
+            print("mse = ", mse/100
+                  )
+            print("sqrt(mse) = ", np.sqrt(mse))
+            print("Pips err = ", mean_absolute_error(yhat, y_test), "\n")
+            mae = mean_absolute_error(yhat, y_test)
+            result.append([c, g, e, mae])
+            _csv = pd.DataFrame(result,columns=["C","gamma","epsilon","MAE"])
+            _csv.to_csv(r'dataset\2020update\bestParam.csv',index=False)
+            print("-------------------------------------------------")
 
-    '''
-                    - Cross validate 
-            '''
-    scores.append(best_svr.score(X_test, y_test))
-    print("scores : ", best_svr.score(X_test, y_test))
+# model = SVR(kernel='rbf', gamma=0.001, C=11,
+#             epsilon=0.0001, verbose=1,max_iter=500000)
 
-    '''
-                    - MAE
-            '''
-    yhat = best_svr.predict(X_test)
-    yhat = sc_y.inverse_transform(yhat)
-    y_test = sc_y.inverse_transform(y_test)
-    print("MAE : ", mean_absolute_error(
-        y_test, yhat, multioutput='raw_values'))
-    joblib.dump(best_svr, filename)
-    i += 1
+# best_svr = MultiOutputRegressor(model)
+# cv = KFold(n_splits=10, shuffle=False)
+# scores = []
+# i = 1
+# for train_index, test_index in cv.split(input_train):
+#     print("K-folds at : ", i)
 
-yhat = best_svr.predict(input_test)
-yhat = sc_y.inverse_transform(yhat)
-y_test = sc_y.inverse_transform(output_test)
-mse = mean_squared_error(y_test, yhat)
-sum_err = []
+#     X_train, X_test, y_train, y_test = input_train[train_index], input_train[
+#         test_index], output_train[train_index], output_train[test_index]
+#     best_svr.fit(X_train, y_train)
 
-for i in range(len(y_test)):
-    err = abs(y_test[i]-yhat[i])
-    sum_err.append(err)
-    #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
-print("Crossvalidation score :", np.mean(scores))
-print("Abs_err = ", r2_score(yhat, y_test))
-print("mse = ", mse/100
-      )
-print("sqrt(mse) = ", np.sqrt(mse))
-print("Pips err = ", mean(sum_err), "\n")
+#     '''
+#                     - Cross validate 
+#             '''
+#     scores.append(best_svr.score(X_test, y_test))
+#     print("scores : ", best_svr.score(X_test, y_test))
+
+#     '''
+#                     - MAE
+#             '''
+#     yhat = best_svr.predict(X_test)
+#     yhat = sc_y.inverse_transform(yhat)
+#     y_test = sc_y.inverse_transform(y_test)
+#     print("MAE : ", mean_absolute_error(
+#         y_test, yhat, multioutput='raw_values'))
+#     joblib.dump(best_svr, filename)
+#     i += 1
+
+# yhat = best_svr.predict(input_test)
+# yhat = sc_y.inverse_transform(yhat) 
+# y_test = sc_y.inverse_transform(output_test)
+# mse = mean_squared_error(y_test, yhat)
+# sum_err = []
+
+# for i in range(len(y_test)):
+#     err = abs(y_test[i]-yhat[i])
+#     sum_err.append(err)
+#     #print(i,"-> Pre ",yhat[i]," vs Acc",y_test[i]," err = ",err)
+# print("Crossvalidation score :", np.mean(scores))
+# print("Abs_err = ", r2_score(yhat, y_test))
+# print("mse = ", mse/100
+#       )
+# print("sqrt(mse) = ", np.sqrt(mse))
+# print("Pips err = ", mean(sum_err), "\n")

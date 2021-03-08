@@ -28,11 +28,16 @@ def preprocessing(file, s=0, create_file=False):
     data = pd.read_csv(file)
     data.set_index('date', inplace=True, drop=True)
     
-    
+    data = pd.DataFrame(data=data,dtype=np.float64)
     df = data[['open', 'high', 'low', 'close', 'volume']].copy(deep=False)
-    df = pd.DataFrame(data=df, dtype=np.float64)
-    label = data[['open_24', 'close_24']].copy(deep=False)
-    label = pd.DataFrame(data=label, dtype=np.float64)
+    df = df.iloc[:-24,:]
+    # df = pd.DataFrame(data=df, dtype=np.float64)
+    label = data[['open', 'close']].copy(deep=False)
+    label = label.iloc[24:,:]
+    label = label.rename(columns={'open': 'open_24', 'close': 'close_24'})
+    # label = label.reset_index()
+    label.index = df.index
+    # label = pd.DataFrame(data=label, dtype=np.float64)
 
 
     def Heiken_Ashi(prices):
@@ -259,8 +264,8 @@ def preprocessing(file, s=0, create_file=False):
     # ----------- Create File .csv------------
     if create_file == True:
         _csv = pd.concat([df, label], axis=1)
-        _csv.to_csv(r'dataset/features/EURUSD_2.csv')
+        _csv.to_csv(r'dataset\2020update\EURUSD_features.csv')
 
     return df, label
 
-A,B = preprocessing(file=r'dataset\data\finish\EURUSD\dataset_H1_EURUSD.csv',create_file=True)
+A,B = preprocessing(file=r'dataset\2020update\EURUSD_H1.csv',create_file=True)
