@@ -5,8 +5,38 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import r2_score
+
+from sklearn.metrics import mean_absolute_error,r2_score,accuracy_score
+
+def moving_average(x, w):
+    return np.convolve(x, np.ones(w), 'valid') / w
+
+def slope_48(targets,predict):
+    predict_pd = pd.DataFrame(predict)
+    true_pd = pd.DataFrame(targets)
+
+    def calc_slope(x):
+        # print(np.polyfit(range(len(x)), x, 1))
+        slope = np.polyfit(range(len(x)), x, 1)[0]
+        return slope
+    pre_slope = true_pd.rolling(48).apply(calc_slope,raw=False).values
+    true_slope = predict_pd.rolling(48).apply(calc_slope,raw=False).values
+    pred_trend = []
+    true_trend = []
+    # print(pre_slope)
+    for i in range(len(pre_slope)):
+        if pre_slope[i] >= 0:
+            pred_trend.append(1)
+        else:
+            pred_trend.append(0)
+    # print(pred_trend)
+    for i in range(len(true_slope)):
+        if true_slope[i] >= 0:
+            true_trend.append(1)
+        else :
+            true_trend.append(0)
+        
+    return accuracy_score(pred_trend,true_trend)*100
 
 file_data = ['dataset/2020update/EURUSD_features.csv','dataset/2020update/GBPUSD_features.csv','dataset/2020update/USDJPY_features.csv']
 file_model = ['model/2020_EURUSD.joblib','model/2020_GBPUSD.joblib','model/2020_USDJPY.joblib']
@@ -82,6 +112,11 @@ for i in range(len(file_data)):
     print("{}".format(pair[i]))
     print("MAE : ", mean_absolute_error(y_test, yhat, multioutput='raw_values'))
     print("R2_score : ", r2_score(yhat, y_test))
+
+    SMA_predict = (np.around(moving_average(yhat[:,1],24),4)/unit[i])
+    SMA_true = (np.around(moving_average(y_test[:,1],24),4)/unit[i])
+
+    print("Trend% : ",slope_48(SMA_true,SMA_predict))
 
 
 
