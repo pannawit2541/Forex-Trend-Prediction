@@ -264,8 +264,8 @@ def preprocessing(file, s=0, create_file=False):
     # ----------- Create File .csv------------
     if create_file == True:
         _csv = pd.concat([df, label], axis=1)
-        _csv.to_csv(r'dataset\2020update\EURUSD_features.csv')
+        _csv.to_csv(r'dataset\2020update\USDJPY_features.csv')
 
     return df, label
 
-A,B = preprocessing(file=r'dataset\2020update\EURUSD_H1.csv',create_file=True)
+A,B = preprocessing(file=r'dataset\2020update\USDJPY_H1.csv',create_file=True)

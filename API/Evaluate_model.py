@@ -1,4 +1,6 @@
 import joblib
+from pickle import load
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -36,30 +38,45 @@ def evaluate_historical(data,c_pair):
             pip = 100
     # ----------------------------------------
     # ! Create Features
-  
     features,targets = for_evaluate(data,scale=c_pair)
-
     # ----------------------------------------
-
+    # print(targets)
     # ----------------------------------------
     # ! Normalization
+    # sc_X = joblib.load('model/scaler/x_scaler.bin')
+
+    # print(sc_X)
     sc_X = StandardScaler()
     sc_y = StandardScaler()
-    x = sc_X.fit_transform(features.values)
-    sc_y.fit_transform(targets.values)
 
+    f_train = pd.read_csv('save_data\{}_features.csv'.format(c_pair))
+    f_train.set_index('date', inplace=True, drop=True)
+
+    labels = f_train[['open_24', 'close_24']].copy(deep=False)
+    labels = labels*pip
+
+    f_train = f_train.drop(['open_24', 'close_24'], axis=1)
+
+    
+    sc_X.fit_transform(f_train.values)
+    sc_y.fit_transform(labels.values)
+    # sc_y = joblib.load('model/scaler/y_scaler.bin')
+    x = sc_X.transform(features.values)
+    sc_y.transform(targets.values)
+    
     # ----------------------------------------
 
     # ----------------------------------------
     # ! Run model & Denormalization
-    model = joblib.load('model/{}_SVR_1.joblib'.format(c_pair))
+    # model = joblib.load('model/{}_SVR_1.joblib'.format(c_pair))
+    model = joblib.load('model/2020_{}.joblib'.format(c_pair))
     yhat = model.predict(x)
     yhat = sc_y.inverse_transform(yhat)
     # y_pre = yhat[-24:,:].copy()/pip
     # yhat = yhat[:-24,:].copy()/pip
     # yhat = yhat
     # ----------------------------------------
-
+    # print(yhat)
     # ----------------------------------------
     # ! Evaluate
 
@@ -102,7 +119,7 @@ def evaluate_historical(data,c_pair):
 
 # data = pd.read_csv(r'save_data\test_EUR.csv')
 # result = evaluate_historical(data,'EURUSD')
-# print((result["Slope_acc"]))
+# print((result["R2_SCORE"]))
 # print(type(result['Date']))
 # from collections import namedtuple
 # d_named = namedtuple("Evaluate", result.keys())(*result.values())

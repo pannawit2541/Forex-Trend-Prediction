@@ -30,6 +30,7 @@ def for_evaluate(file, scale=0, create_file=False):
     # df.drop(df.tail(24).index, inplace=True)
 
     label = data[['open', 'close']].copy(deep=False)
+    # label = label.rename(columns={'open': 'open_24', 'close': 'close_24'})
     label = label.iloc[24:, :]
 
     label.reset_index(drop=True, inplace=True)
