@@ -40,6 +40,7 @@
               :titleTxt="this.titleTxt"
               :showVolume="this.show"
               :colorTitle="colors.colorCandleDown"
+              :indexBased="this.flag"
             >
             </trading-vue>
           </div>
@@ -51,6 +52,7 @@
 
 <script>
 import TradingVue from "trading-vue-js";
+// import Data from "../../data/data_copy.json"
 
 export default {
   name: "CandleStickChart",
@@ -61,6 +63,8 @@ export default {
   },
   data() {
     return {
+      // chart : Data,
+      flag : true,
       width: window.innerWidth,
       height: window.innerHeight,
       show: false,

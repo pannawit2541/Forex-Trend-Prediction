@@ -1,3 +1,4 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify, make_response
 import requests
 import json
@@ -25,18 +26,24 @@ client = MongoClient(DB_URI)
 db = client['Forex_historical']
 """
 API_historical = {
-        "EURUSD" : requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-        "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-        "USDJPY" : requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+    "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+    "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+    "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
 }
+
 
 def forex_historical():
     API_historical = {
-        "EURUSD" : requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+        "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
         "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-        "USDJPY" : requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+        "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
     }
-
+    evaluate = {
+        # "EURUSD" : evaluate_historical(data,"EURUSD")
+        "EURUSD": create_feature("EURUSD"),
+        "GBPUSD": create_feature("GBPUSD"),
+        "USDJPY": create_feature("USDJPY"),
+    }
 
 
 def create_feature(c_pair):
@@ -49,18 +56,15 @@ def create_feature(c_pair):
 # data = pd.read_csv(r'save_data\test.csv')
 evaluate = {
     # "EURUSD" : evaluate_historical(data,"EURUSD")
-    "EURUSD" : create_feature("EURUSD"),
+    "EURUSD": create_feature("EURUSD"),
     "GBPUSD": create_feature("GBPUSD"),
-    "USDJPY" : create_feature("USDJPY"),
+    "USDJPY": create_feature("USDJPY"),
 }
 
-from apscheduler.schedulers.background import BackgroundScheduler
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(forex_historical,'interval',minutes=60)
+sched.add_job(forex_historical, 'interval', minutes=60)
 sched.start()
-
-
 
 
 @app.route('/<string:c_pair>/historical', methods=['GET'])
