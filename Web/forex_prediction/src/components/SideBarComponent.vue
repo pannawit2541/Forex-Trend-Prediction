@@ -13,7 +13,7 @@
                 :icon="['fas', 'chart-pie']"
                 size="lg"
               ></fa-icon>
-              <span class="li-text">Dashboard</span>
+              <span class="li-text">Overview</span>
             </div>
           </router-link>
         </li>

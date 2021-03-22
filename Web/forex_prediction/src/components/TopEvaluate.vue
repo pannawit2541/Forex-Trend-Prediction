@@ -9,13 +9,13 @@
               <div class="column is-two-thirds">
                 <div> <p class="title is-4">{{MAE}} pips</p> </div>
                 <div style="padding-top : 5px">
-                  <span class="title is-6" style="color: Tomato"> 2 pips </span>
+                  <!-- <span class="title is-6" style="color: Tomato"> 2 pips </span>
                   <span>
                     <fa-icon
                       :icon="['fas', 'arrow-up']"
                       style="color: #FF6565"
                     ></fa-icon>
-                  </span>
+                  </span> -->
                 </div>
               </div>
               <div class="column">
@@ -40,7 +40,7 @@
                   <p class="title is-4 ">{{R2_score}} %</p>
                 </div>
                 <div style="padding-top : 5px">
-                  <span class="title is-6" style="color: YellowGreen">
+                  <!-- <span class="title is-6" style="color: YellowGreen">
                     2 %
                   </span>
                   <span>
@@ -48,7 +48,7 @@
                       :icon="['fas', 'arrow-up']"
                       style="color: YellowGreen"
                     ></fa-icon>
-                  </span>
+                  </span> -->
                 </div>
               </div>
               <div class="column">
@@ -68,7 +68,7 @@
               <div class="column is-two-thirds">
                 <div><p class="title is-4">{{Trend_acc}} %</p></div>
                 <div style="padding-top : 5px">
-                  <span class="title is-6" style="color: YellowGreen">
+                  <!-- <span class="title is-6" style="color: YellowGreen">
                     5 %
                   </span>
                   <span>
@@ -76,7 +76,7 @@
                       :icon="['fas', 'arrow-up']"
                       style="color: YellowGreen"
                     ></fa-icon>
-                  </span>
+                  </span> -->
                 </div>
               </div>
               <div class="column">
