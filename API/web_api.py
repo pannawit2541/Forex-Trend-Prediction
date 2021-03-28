@@ -26,17 +26,17 @@ client = MongoClient(DB_URI)
 db = client['Forex_historical']
 """
 API_historical = {
-    "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-    "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-    "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+    "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
+    "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
+    "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
 }
 
 
 def forex_historical():
     API_historical = {
-        "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-        "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
-        "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=5LrIgWl5n9heeh66lr4HwJug&level=3"),
+        "EURUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=EUR/USD&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
+        "GBPUSD": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=GBP/USD&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
+        "USDJPY": requests.get("https://fcsapi.com/api-v3/forex/history?symbol=USD/JPY&period=1h&access_key=62fshe1xJ6ejIAFmICbhv&level=3"),
     }
     evaluate = {
         # "EURUSD" : evaluate_historical(data,"EURUSD")
