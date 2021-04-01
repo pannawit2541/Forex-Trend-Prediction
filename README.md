@@ -11,7 +11,15 @@
 > - `Flask API` เป็น `API` ที่เชื่อมระบบทั้งหมด
 > - `Website` ใช้ `Vue.js` ในการพัฒนา
 
-
 ## SOFTWARE REQUIRED
 > - Python 3.7
 > - Vue.js
+
+## INSTALLATION
+สำหรับ Machine Learning จะใช้ Library ในการสร้าง Features และ Train model โดยจะต้องติดตั้งดังต่อไปนี้
+- TA-Lib : https://github.com/mrjbq7/ta-lib
+```python
+pip install pandas
+pip install numpy
+pip install talib
+```
