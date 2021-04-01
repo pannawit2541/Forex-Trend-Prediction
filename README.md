@@ -17,6 +17,7 @@
 > - Vue.js
 
 ## INSTALLATION
+
 ### MACHINE LEANING LIBRARY REQUIRED
 สำหรับ Machine Learning จะใช้ Library ในการสร้าง Features และ Train model โดยจะต้องติดตั้งดังต่อไปนี้
 Library พื้นฐานที่ใช้พัฒนา
@@ -40,3 +41,16 @@ pip install joblib
 ```python
 pip install apscheduler 
 ```
+
+### Vue.js LIBRARY REQUIRED
+ในส่วนเว็บไซต์จะใช้ [Vue.js](https://vuejs.org/v2/guide/installation.html) ในการพัฒนาโดยจะมี Library ที่ต้องสร้าง กราฟต่างๆดังนี้
+> - [Vue-ApexChart](https://apexcharts.com/docs/vue-charts/)
+> - [Vue-chartjs](https://vue-chartjs.org/)
+> - [Trading-vue-js](https://github.com/tvjsx/trading-vue-js)
+
+ในส่วนของ API เชื่อมกับ Flask จะใช้ axios ในการเชื่อม
+> - [Axios](https://www.npmjs.com/package/axios)
+
+สำหรับ CSS ใช้ Buefy
+> - [Buefy](https://buefy.org/)
+
