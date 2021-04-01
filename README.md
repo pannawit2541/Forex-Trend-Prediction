@@ -23,5 +23,5 @@ pip install pandas
 pip install numpy
 ```
 เมื่อติดตั้ง libray พื้นฐานที่กล่าวมาข้างต้นแล้ว ต่อไปจะเป็นการติดตั้ง Library ในการสร้าง Features โดยสามารถศึกษาวิธีการตามลิงค์ที่แนบให้
-- TA-Lib : https://github.com/mrjbq7/ta-lib
-- Technical Analysis Library in Python (ta) : https://github.com/bukosabino/ta?fbclid=IwAR2TN1sWhVr4HESxBbDpSyaM6SkdQvs7MakEVbY02MrMSmR87jMGqIxcAvs
+- [TA-Lib](https://github.com/mrjbq7/ta-lib)
+- [Technical Analysis Library in Python (ta)](https://github.com/bukosabino/ta?fbclid=IwAR2TN1sWhVr4HESxBbDpSyaM6SkdQvs7MakEVbY02MrMSmR87jMGqIxcAvs)
