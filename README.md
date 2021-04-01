@@ -6,4 +6,12 @@
 > - ลดโอกาสผิดพลาด
 > - ลดเวลาในการวิเคราะห์
 
-## Software Required
+## OVERVIEW SYSTEM
+> `Machine Learning` โดยใช้ `Support Vector Regression` ในการทำนาย
+> `Flask API` เป็น `API` ที่เชื่อมระบบทั้งหมด
+> `Website` ใช้ `Vue.js` ในการพัฒนา
+
+
+## SOFTWARE REQUIRED
+> Python 3.7
+> Vue.js
