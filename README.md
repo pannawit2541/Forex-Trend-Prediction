@@ -17,9 +17,11 @@
 
 ## INSTALLATION
 สำหรับ Machine Learning จะใช้ Library ในการสร้าง Features และ Train model โดยจะต้องติดตั้งดังต่อไปนี้
-- TA-Lib : https://github.com/mrjbq7/ta-lib
+Library พื้นฐานที่ใช้พัฒนา
 ```python
 pip install pandas
 pip install numpy
-pip install talib
 ```
+เมื่อติดตั้ง libray พื้นฐานที่กล่าวมาข้างต้นแล้ว ต่อไปจะเป็นการติดตั้ง Library ในการสร้าง Features โดยสามารถศึกษาวิธีการตามลิงค์ที่แนบให้
+- TA-Lib : https://github.com/mrjbq7/ta-lib
+- Technical Analysis Library in Python (ta) : https://github.com/bukosabino/ta?fbclid=IwAR2TN1sWhVr4HESxBbDpSyaM6SkdQvs7MakEVbY02MrMSmR87jMGqIxcAvs
