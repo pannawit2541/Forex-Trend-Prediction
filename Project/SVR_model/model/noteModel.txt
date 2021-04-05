@@ -1,0 +1,11 @@
+SVR(kernel='rbf', gamma='auto', C=25,
+            epsilon=0.0001, verbose=2)  #  41.986  pips 
+
+SVR(kernel='rbf', gamma='auto', C=50,
+            epsilon=0.0001, verbose=2)  #  40 pips
+
+SVR(kernel='rbf', gamma='auto', C=15,
+            epsilon=0.0001, verbose=2)  #  40 pips
+
+SVR(kernel='rbf', gamma='auto', C=25,
+            epsilon=0.1, verbose=2)    #   40.221
