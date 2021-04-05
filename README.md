@@ -16,6 +16,11 @@
 > - Python 3.7
 > - Vue.js
 
+## Project Info
+ไฟล์ Data จะประกอบไปด้วย 2 ไฟล์หลักๆ คือ 
+> - ไฟล์ raw data คือไฟล์ <ชื่อสกุลเงิน>_H1.csv
+> - ไฟล์ preprocess คือ <ชื่อสกุลเงิน>_features.csv เป็นไฟล์ที่ preprocessing จาก raw data 
+
 ## INSTALLATION
 
 ### MACHINE LEANING LIBRARY REQUIRED
@@ -51,6 +56,9 @@ pip install apscheduler
 ในส่วนของ API เชื่อมกับ Flask จะใช้ axios ในการเชื่อม
 > - [Axios](https://www.npmjs.com/package/axios)
 
-สำหรับ CSS ใช้ Buefy
+สำหรับ CSS และ Icon ใช้ Buefy
 > - [Buefy](https://buefy.org/)
+> - [Font Awesome](https://fontawesome.com/icons)
+
+
 
